@@ -1,0 +1,32 @@
+{
+    "compilerOptions": {
+        "target": "es6",
+        "lib": ["es5", "es2015", "es2016", "dom", "esnext"],
+        "jsx": "react-jsx",
+        "module": "ESNext",
+        "moduleResolution": "node",
+        "baseUrl": "./",
+        "paths": {
+            "@components": ["src/components/index"],
+            "@constants": ["src/constants/index"],
+            "@helpers": ["src/helpers/index"],
+            "@store": ["src/store/index"],
+            "@hooks": ["src/hooks/index"],
+            "@contexts": ["src/contexts/index"],
+            "@types": ["src/types/index"]
+        },
+        "typeRoots": ["node_modules/@types"],
+        "types": ["node"],
+        "declaration": true,
+        "sourceMap": true,
+        "outDir": "dist",
+        "allowSyntheticDefaultImports": true,
+        "esModuleInterop": true,
+        "forceConsistentCasingInFileNames": true,
+        "strict": true,
+        "noImplicitAny": true,
+        "skipLibCheck": true
+    },
+    "include": ["./src/**/*"],
+    "exclude": ["node_modules"]
+}
