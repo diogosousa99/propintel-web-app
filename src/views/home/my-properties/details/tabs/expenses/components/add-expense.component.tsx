@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { useExpensesApiActions, useExpensesViewModel } from '../hooks';
 import { EXPENSES_FORM_FIELDS } from '../constants';
 import { inputClassName } from '@helpers';
-import { Controller } from 'react-hook-form';
+import { Controller, useWatch } from 'react-hook-form';
 import { DayPicker } from 'react-day-picker';
 import { PlusIcon } from '@heroicons/react/24/outline';
+import { ExpensesCategoriesEnum } from '@store';
 
 export function AddExpense() {
     const [date, _setDate] = useState<Date | undefined>();
@@ -18,7 +19,12 @@ export function AddExpense() {
         handleSubmit,
     } = expensesForm;
 
-    const { isAddExpenseLoading, _handleAddExpense } = useExpensesApiActions();
+    const { isLoading: isAddExpenseLoading, _handleAddExpense } = useExpensesApiActions();
+
+    const selectedCategoryId = useWatch({
+        control,
+        name: EXPENSES_FORM_FIELDS.category,
+    });
 
     return (
         <div className="flex justify-end">
@@ -57,6 +63,21 @@ export function AddExpense() {
                                 </span>
                             ) : null}
                         </div>
+                        {+selectedCategoryId! === ExpensesCategoriesEnum.OtherCosts ? (
+                            <div className="flex flex-col w-full">
+                                <legend className="text-xs pl-2">Name*</legend>
+                                <input
+                                    className={inputClassName(EXPENSES_FORM_FIELDS.name!, errors)}
+                                    placeholder="Name"
+                                    {...register(EXPENSES_FORM_FIELDS.name!)}
+                                />
+                                {errors[EXPENSES_FORM_FIELDS.name!] ? (
+                                    <span className="text-xs text-error">
+                                        {errors[EXPENSES_FORM_FIELDS.name!]?.message}
+                                    </span>
+                                ) : null}
+                            </div>
+                        ) : null}
                         <div className="flex flex-col w-full">
                             <legend className="text-xs pl-2">Value (€)*</legend>
                             <input

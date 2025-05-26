@@ -1,6 +1,13 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseApi } from '../base-api';
-import { AddExpense, MyPropertyMetadata, MyPropertyResponse, PropertyExpenses, PropertyExpensesParams } from './types';
+import {
+    AddExpense,
+    AddOtherExpense,
+    MyPropertyMetadata,
+    MyPropertyResponse,
+    PropertyExpenses,
+    PropertyExpensesParams,
+} from './types';
 import { BasePaginationParams } from '../types';
 
 export const myPropertiesApi = createApi({
@@ -13,7 +20,7 @@ export const myPropertiesApi = createApi({
                 params,
             }),
         }),
-        getExpenses: builder.query<PropertyExpenses[], PropertyExpensesParams>({
+        getExpenses: builder.query<PropertyExpenses, PropertyExpensesParams>({
             query: ({ propertyId, categoryId }) => ({
                 url: `/my-properties/${propertyId}/expenses`,
                 params: { categoryId },
@@ -31,8 +38,20 @@ export const myPropertiesApi = createApi({
                 body: data,
             }),
         }),
+        addOtherExpense: builder.mutation<void, { propertyId: number; data: AddOtherExpense }>({
+            query: ({ propertyId, data }) => ({
+                url: `/my-properties/${propertyId}/expenses/other`,
+                method: 'POST',
+                body: data,
+            }),
+        }),
     }),
 });
 
-export const { useGetMyPropertiesQuery, useGetExpensesQuery, useGetMyPropertyMetadataQuery, useAddExpenseMutation } =
-    myPropertiesApi;
+export const {
+    useGetMyPropertiesQuery,
+    useGetExpensesQuery,
+    useGetMyPropertyMetadataQuery,
+    useAddExpenseMutation,
+    useAddOtherExpenseMutation,
+} = myPropertiesApi;

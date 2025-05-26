@@ -1,5 +1,5 @@
 import { useAppParam } from '@hooks';
-import { ExpensesCategories, useGetExpensesQuery, useGetMyPropertyMetadataQuery } from '@store';
+import { ExpensesCategories, PropertyExpenses, useGetExpensesQuery, useGetMyPropertyMetadataQuery } from '@store';
 import { Resolver, useForm } from 'react-hook-form';
 import { ExpensesForm } from '../types';
 import { zodResolver } from '@hookform/resolvers/zod';
@@ -13,7 +13,12 @@ function useExpensesForm() {
     });
 }
 
-function useExpensesCategories() {
+type Categories = {
+    categories: ExpensesCategories[];
+    indexed: { [key: string]: ExpensesCategories };
+};
+
+function useExpensesCategories(): Categories | undefined {
     const { data: metadata } = useGetMyPropertyMetadataQuery();
 
     return useMemo(
@@ -37,6 +42,26 @@ function useExpensesCategories() {
     );
 }
 
+function useProcessExpenses(expensesList?: PropertyExpenses, expensesCategories?: Categories) {
+    const { expenses, otherExpenses } = expensesList ?? {
+        expenses: [],
+        otherExpenses: [],
+    };
+
+    return useMemo(() => {
+        return [
+            ...expenses.map((expense) => ({
+                ...expense,
+                categoryName: expensesCategories?.indexed[expense.categoryId]?.name,
+            })),
+            ...otherExpenses.map((expense) => ({
+                ...expense,
+                categoryName: expense.name,
+            })),
+        ];
+    }, [expenses, otherExpenses, expensesCategories]);
+}
+
 export function useExpensesViewModel() {
     const propertyId = useAppParam('propertyId', (propertyId) => +propertyId);
 
@@ -51,12 +76,14 @@ export function useExpensesViewModel() {
 
     const expensesForm = useExpensesForm();
 
+    const processedExpenses = useProcessExpenses(expenses, expensesCategories);
+
     return {
         propertyId,
         categoryId,
         isLoading: areExpensesLoading,
         expensesCategories,
-        expenses: expenses ?? [],
+        expenses: processedExpenses ?? [],
         expensesForm,
         _setCategoryId,
     };

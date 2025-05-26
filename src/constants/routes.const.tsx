@@ -4,6 +4,7 @@ import { Suspense } from '@components';
 
 const Login = lazy(() => import('../views/auth/login/login.view'));
 const Home = lazy(() => import('../views/home/home.view'));
+const Dashboard = lazy(() => import('../views/home/dashboard/dashboard.view'));
 const PropertyId = lazy(() => import('../views/home/property-id/property-id.view'));
 const MyPropertiesList = lazy(() => import('../views/home/my-properties/list/my-properties-list.view'));
 const MyPropertyDetails = lazy(() => import('../views/home/my-properties/details/my-property-details.view'));
@@ -16,6 +17,7 @@ export const routes = createBrowserRouter(
         <Route path="/" element={<Outlet />}>
             <Route path="login" element={<Login />} />
             <Route path="home" element={<Home>{Suspense(<Outlet />)}</Home>}>
+                <Route path="dashboard" element={<Dashboard />} index />
                 <Route path="property-id" element={<PropertyId />} />
                 <Route path="my-properties" element={<MyPropertiesList />} />
                 <Route path="my-properties/:propertyId" element={<MyPropertyDetails />}>

@@ -9,7 +9,7 @@ export function useAppHome() {
 
     useEffect(() => {
         if (currentPath === '/home') {
-            routes.navigate('/home/property-id');
+            routes.navigate('/home/dashboard');
         }
     }, [data]);
 }

@@ -1,6 +1,54 @@
 import { EllipsisHorizontalIcon } from '@heroicons/react/24/outline';
 import { AddExpense } from './components';
 import { useExpensesViewModel } from './hooks';
+import { useEffect, useRef, useState } from 'react';
+
+function ManageExpenses() {
+    const [openMenu, setOpenMenu] = useState(false);
+    const menuRef = useRef<HTMLUListElement>(null);
+    const buttonRef = useRef<HTMLButtonElement>(null);
+
+    useEffect(() => {
+        function handleClickOutside(event: MouseEvent) {
+            if (
+                menuRef.current &&
+                !menuRef.current.contains(event.target as Node) &&
+                buttonRef.current &&
+                !buttonRef.current.contains(event.target as Node)
+            ) {
+                setOpenMenu(false);
+            }
+        }
+
+        if (openMenu) {
+            document.addEventListener('mouseup', handleClickOutside);
+        } else {
+            document.removeEventListener('mouseup', handleClickOutside);
+        }
+
+        return () => {
+            document.removeEventListener('mouseup', handleClickOutside);
+        };
+    }, [openMenu]);
+
+    return (
+        <>
+            <button ref={buttonRef} className="btn btn-xs btn-square" onClick={() => setOpenMenu((prev) => !prev)}>
+                <EllipsisHorizontalIcon />
+            </button>
+            {openMenu ? (
+                <ul ref={menuRef} className="menu bg-base-200 rounded-box w-56 absolute right-4">
+                    <li>
+                        <a>Edit</a>
+                    </li>
+                    <li>
+                        <a>Delete</a>
+                    </li>
+                </ul>
+            ) : null}
+        </>
+    );
+}
 
 export default function MyPropertyExpenses() {
     const { expensesCategories, expenses, categoryId, _setCategoryId } = useExpensesViewModel();
@@ -43,17 +91,13 @@ export default function MyPropertyExpenses() {
                         <table className="table table-fixed">
                             <tbody>
                                 {expenses.map((expense) => (
-                                    <tr key={expense.id}>
-                                        <td className="w-1/4">
-                                            {expensesCategories?.indexed[expense.categoryId].name}
-                                        </td>
+                                    <tr key={`${expense.id} ${expense.date}`}>
+                                        <td className="w-1/4">{expense.categoryName}</td>
                                         <td className="w-1/4">{expense.value}</td>
                                         <td className="w-1/4">{new Date(expense.date).toLocaleDateString()}</td>
                                         <td className="w-1/4">{expense.description}</td>
                                         <td className="w-16">
-                                            <button className="btn btn-xs btn-square">
-                                                <EllipsisHorizontalIcon />
-                                            </button>
+                                            <ManageExpenses />
                                         </td>
                                     </tr>
                                 ))}

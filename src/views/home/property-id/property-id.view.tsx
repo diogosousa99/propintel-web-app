@@ -1,6 +1,5 @@
 import { ModuleTitle } from '@components';
 import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/react/24/outline';
-import 'cally';
 import { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
 import { usePropertyIdViewModel, usePropertyIdApiActions } from './hooks';

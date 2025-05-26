@@ -1,7 +1,7 @@
 import { useMemo } from 'react';
 import { BaseAppLayout } from '@components';
 import { useAppHome, useLogoutApiActions } from '@hooks';
-import { PlusCircleIcon, DocumentIcon, HomeIcon } from '@heroicons/react/24/outline';
+import { PlusCircleIcon, DocumentIcon, HomeIcon, ChartPieIcon } from '@heroicons/react/24/outline';
 
 type Props = {
     children?: React.ReactNode | React.ReactNode[];
@@ -14,6 +14,11 @@ export default function Home({ children }: Props) {
 
     const SIDEBAR_MENU = useMemo(
         () => [
+            {
+                name: 'Dashboard',
+                icon: <ChartPieIcon height={20} />,
+                to: '/home/dashboard',
+            },
             {
                 name: 'Property ID',
                 icon: <PlusCircleIcon height={20} />,

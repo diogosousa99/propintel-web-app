@@ -10,13 +10,27 @@ export type MyProperty = {
 
 export type MyPropertyResponse = BasePagination<MyProperty>;
 
-export type PropertyExpenses = {
+export type Expense = {
     id: number;
     propertyId: number;
     categoryId: number;
     value: number;
     date: string;
     description?: string;
+};
+
+export type OtherExpense = {
+    id: number;
+    propertyId: number;
+    name: string;
+    value: number;
+    date: string;
+    description?: string;
+};
+
+export type PropertyExpenses = {
+    expenses: Expense[];
+    otherExpenses: OtherExpense[];
 };
 
 export type PropertyExpensesParams = {
@@ -38,6 +52,13 @@ export type MyPropertyMetadata = {
 
 export type AddExpense = {
     categoryId: number;
+    value: number;
+    date: string;
+    description?: string;
+};
+
+export type AddOtherExpense = {
+    name: string;
     value: number;
     date: string;
     description?: string;
