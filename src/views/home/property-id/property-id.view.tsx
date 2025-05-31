@@ -1,16 +1,19 @@
 import { ModuleTitle } from '@components';
-import { ArrowUpTrayIcon, PlusIcon } from '@heroicons/react/24/outline';
+import { ArrowUpTrayIcon, PlusIcon, DocumentIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
 import { useState } from 'react';
 import { DayPicker } from 'react-day-picker';
-import { usePropertyIdViewModel, usePropertyIdApiActions } from './hooks';
+import { usePropertyIdViewModel } from './hooks';
 import { PROPERTY_ID_FORM_FIELDS } from './constants';
 import { inputClassName } from '@helpers';
 import { Controller } from 'react-hook-form';
+import { UserDocumentsResponse } from '@store';
+import { usePropertyIdApiActions } from './test-hooks';
 
 export default function PropertyId() {
     const [acquisitionDate, _setAcquisitionDate] = useState<Date | undefined>();
-
     const [files, setFiles] = useState<FileList | null>(null);
+    const [isProcessing, setIsProcessing] = useState(false);
+    const [showSuccess, setShowSuccess] = useState(false);
 
     const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
         setFiles(e.target.files);
@@ -18,12 +21,43 @@ export default function PropertyId() {
 
     const { propertyIdForm } = usePropertyIdViewModel();
 
-    const { isUploadFilesLoading, isCreatePropertyLoading, _handleUploadFiles, _handleCreateProperty } =
-        usePropertyIdApiActions();
+    const {
+        isUploadFilesLoading,
+        isCreatePropertyLoading,
+        _handleCreateProperty,
+        handleProcessDocument,
+        isLoadingDocuments,
+        userDocuments,
+        _handleUploadFiles,
+    } = usePropertyIdApiActions();
 
-    const { register, formState, reset, handleSubmit } = propertyIdForm;
+    const { register, formState, reset, handleSubmit, setValue } = propertyIdForm;
 
     const { errors } = formState;
+
+    const handleProcessExistingDocument = async (fileUrl: string) => {
+        setIsProcessing(true);
+        const modal = document.getElementById('my_modal_3')?.closest('dialog');
+        if (modal) {
+            (modal as HTMLDialogElement).close();
+        }
+
+        const fields = await handleProcessDocument(fileUrl);
+        if (fields) {
+            setValue(PROPERTY_ID_FORM_FIELDS.typology, fields.typology);
+            setValue(PROPERTY_ID_FORM_FIELDS.fraction, fields.fraction);
+            setValue(PROPERTY_ID_FORM_FIELDS.affectation, fields.affectation);
+            setValue(PROPERTY_ID_FORM_FIELDS.privateGrossArea, fields.privateGrossArea);
+            setValue(PROPERTY_ID_FORM_FIELDS.dependentGrossArea, fields.dependentGrossArea);
+            setValue(PROPERTY_ID_FORM_FIELDS.assetValue, fields.assetValue);
+
+            setShowSuccess(true);
+            setTimeout(() => {
+                setShowSuccess(false);
+            }, 5000);
+        }
+        setIsProcessing(false);
+    };
 
     return (
         <>
@@ -73,37 +107,75 @@ export default function PropertyId() {
                             Cancel
                         </button>
                     </div>
+
+                    {/* Documents List */}
+                    <div className="divider">Uploaded Documents</div>
+                    {isLoadingDocuments ? (
+                        <div className="flex justify-center py-4">
+                            <span className="loading loading-spinner loading-lg" />
+                        </div>
+                    ) : (
+                        <div className="flex flex-col gap-2 max-h-96 overflow-y-auto">
+                            {userDocuments?.documents.map((doc: UserDocumentsResponse['documents'][0]) => (
+                                <div
+                                    key={doc.url}
+                                    className="card card-compact bg-base-100 hover:bg-base-200 transition-colors cursor-pointer"
+                                    onClick={() => handleProcessExistingDocument(doc.url)}
+                                >
+                                    <div className="card-body flex-row items-center gap-3 p-3">
+                                        <div className="bg-primary/10 p-2 rounded-lg">
+                                            <DocumentIcon className="h-5 w-5 text-primary" />
+                                        </div>
+                                        <div className="flex-1 min-w-0 overflow-hidden">
+                                            <h3 className="card-title text-sm w-full line-clamp-1">{doc.name}</h3>
+                                            <p className="text-xs text-base-content/60">
+                                                {new Date(doc.createdAt).toLocaleDateString()}
+                                            </p>
+                                        </div>
+                                    </div>
+                                </div>
+                            ))}
+                        </div>
+                    )}
                 </div>
             </dialog>
-            <form
-                onSubmit={handleSubmit((data) => {
-                    _handleCreateProperty(data);
-                })}
-            >
-                <div className="flex flex-col gap-6 px-12 py-22 h-full">
-                    <div className="flex justify-between">
-                        <ModuleTitle title="Property ID" subtitle="Add a new property" />
-                        <div className="flex gap-4">
-                            <button
-                                className="btn btn-outline"
-                                type="button"
-                                onClick={() =>
-                                    (document.getElementById('my_modal_3') as HTMLDialogElement)?.showModal()
-                                }
-                            >
-                                <ArrowUpTrayIcon height={18} />
-                                Upload Files
-                            </button>
-                            <button className="btn btn-neutral text-white" type="submit">
-                                {isCreatePropertyLoading ? (
-                                    <span className="loading loading-spinner" />
-                                ) : (
-                                    <PlusIcon height={18} />
-                                )}
-                                Add
-                            </button>
-                        </div>
+
+            <div className="flex flex-col gap-6 px-12 py-22 h-full">
+                <div className="flex justify-between">
+                    <ModuleTitle title="Property ID" subtitle="Add a new property" />
+                    <div className="flex gap-4 items-center">
+                        {isProcessing ? (
+                            <div className="flex items-center gap-2 text-sm text-base-content/60">
+                                <span className="loading loading-spinner loading-sm" />
+                                Processing document...
+                            </div>
+                        ) : null}
+                        {showSuccess ? (
+                            <div className="text-success text-sm">Document processed successfully!</div>
+                        ) : null}
+                        <button
+                            className="btn btn-outline"
+                            type="button"
+                            onClick={() => (document.getElementById('my_modal_3') as HTMLDialogElement)?.showModal()}
+                        >
+                            <ArrowUpTrayIcon height={18} />
+                            Upload Files
+                        </button>
+                        <button className="btn btn-neutral text-white" type="submit">
+                            {isCreatePropertyLoading ? (
+                                <span className="loading loading-spinner" />
+                            ) : (
+                                <PlusIcon height={18} />
+                            )}
+                            Add
+                        </button>
                     </div>
+                </div>
+                <form
+                    onSubmit={handleSubmit((data) => {
+                        _handleCreateProperty(data);
+                    })}
+                >
                     <div className="grid grid-cols-2 gap-8">
                         <div className="w-full">
                             <legend className="text-xs pl-2">Name*</legend>
@@ -349,8 +421,8 @@ export default function PropertyId() {
                             ) : null}
                         </div>
                     </div>
-                </div>
-            </form>
+                </form>
+            </div>
         </>
     );
 }

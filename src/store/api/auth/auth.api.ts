@@ -7,7 +7,7 @@ export const authApi = createApi({
     baseQuery: baseApi,
     endpoints: (builder) => ({
         userSession: builder.query<UserSession, void>({
-            query: () => ({ url: '/auth' }),
+            query: () => ({ url: '/me' }),
         }),
         login: builder.mutation<void, Login>({
             query: (body) => ({ url: '/auth/login', method: 'POST', body }),

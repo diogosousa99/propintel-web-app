@@ -6,9 +6,10 @@ import { HeaderMenu } from '@types';
 
 type Props = {
     menu: HeaderMenu[];
+    onDrawerToggle?: () => void;
 };
 
-export function Header({ menu }: Props) {
+export function Header({ menu, onDrawerToggle }: Props) {
     const [open, _setOpen] = useState(false);
     const dropdownRef = useRef(null);
 
@@ -37,6 +38,28 @@ export function Header({ menu }: Props) {
 
     return (
         <header className="flex items-center gap-1 justify-end h-16 w-full bg-primary-content text-white p-4">
+            {onDrawerToggle && (
+                <button
+                    className="btn btn-ghost btn-square md:hidden mr-2"
+                    onClick={onDrawerToggle}
+                    aria-label="Open sidebar menu"
+                >
+                    <svg
+                        xmlns="http://www.w3.org/2000/svg"
+                        className="h-6 w-6"
+                        fill="none"
+                        viewBox="0 0 24 24"
+                        stroke="currentColor"
+                    >
+                        <path
+                            strokeLinecap="round"
+                            strokeLinejoin="round"
+                            strokeWidth={2}
+                            d="M4 6h16M4 12h16M4 18h16"
+                        />
+                    </svg>
+                </button>
+            )}
             <div className="avatar avatar-placeholder">
                 <div className="bg-neutral text-neutral-content w-6 rounded-full">
                     <span className="text-xs">{initials}</span>

@@ -1,16 +1,4 @@
-export type PropertyIdFileUploadResponse = {
-    fields: {
-        affectation: string;
-        fraction: string;
-        dependentGrossArea: string;
-        privateGrossArea: string;
-        assetValue: string;
-        typology: string;
-    };
-    filePaths: Array<string>;
-};
-
-export type CreateProperty = {
+export interface CreateProperty {
     name: string;
     localization: string;
     acquisitionValue: number;
@@ -21,14 +9,22 @@ export type CreateProperty = {
     category: string;
     privateGrossArea: number;
     dependentGrossArea: number;
-    garden: number;
-    balcony: number;
+    garden?: number;
+    balcony?: number;
     energyCertificate: string;
     assetValue: number;
     state: string;
-};
+}
 
-export type ProcessDocumentResponse = {
+export interface PropertyIdFileUploadResponse {
+    files: Array<{
+        name: string;
+        url: string;
+        type: 'pdf' | 'image';
+    }>;
+}
+
+export interface ProcessDocumentResponse {
     fields: {
         privateGrossArea: string;
         dependentGrossArea: string;
@@ -38,13 +34,13 @@ export type ProcessDocumentResponse = {
         assetValue: string;
     };
     fileUrl: string;
-};
+}
 
-export type UserDocumentsResponse = {
+export interface UserDocumentsResponse {
     documents: Array<{
         name: string;
         url: string;
         type: 'pdf' | 'image';
         createdAt: string;
     }>;
-};
+}

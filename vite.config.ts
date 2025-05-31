@@ -8,6 +8,16 @@ export default defineConfig({
         open: true,
         port: 4444,
     },
+    build: {
+        rollupOptions: {
+            output: {
+                manualChunks: {
+                    'react-chartjs-2': ['react-chartjs-2'],
+                    chartjs: ['chart.js'],
+                },
+            },
+        },
+    },
     plugins: [react(), tailwindcss()],
     resolve: {
         alias: [
