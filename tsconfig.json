@@ -7,7 +7,7 @@
         "moduleResolution": "node",
         "baseUrl": "./",
         "paths": {
-            "@components": ["src/components/index"],
+            "@components/*": ["src/components/*"],
             "@constants": ["src/constants/index"],
             "@helpers": ["src/helpers/index"],
             "@store": ["src/store/index"],

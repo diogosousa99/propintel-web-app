@@ -1,80 +1,87 @@
-import { useToast } from '@hooks';
-import { useCreatePropertyMutation, useUploadPropertyDocumentsMutation } from '@store';
+import { useCreatePropertyMutation, useProcessDocumentMutation, useUploadPropertyDocumentsMutation } from '@store';
 import { PropertyIdForm } from '../types';
+import { useCallback } from 'react';
+import { toast } from 'sonner';
 import { UseFormReset } from 'react-hook-form';
-import { useCallback, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 
 export function usePropertyIdApiActions() {
-    const { _showToast } = useToast();
+    const navigate = useNavigate();
 
-    const [filePaths, _setFilePaths] = useState<string[]>([]);
+    const [_uploadPropertyDocuments, { isLoading: isUploadFilesLoading }] = useUploadPropertyDocumentsMutation();
+    const [_processDocument, { isLoading: isProcessingDocument }] = useProcessDocumentMutation();
+    const [_createProperty, { isLoading: isCreatePropertyLoading }] = useCreatePropertyMutation();
 
-    const [_uploadFiles, { isLoading: isUploadFilesLoading }] = useUploadPropertyDocumentsMutation();
-
-    const _handleUploadFiles = useCallback((files: File[], _updateForm: UseFormReset<PropertyIdForm>) => {
+    const _handleUploadFiles = useCallback((files: File[]) => {
         const formData = new FormData();
         files.forEach((file) => {
             formData.append('files', file);
         });
 
-        _uploadFiles(formData)
+        _uploadPropertyDocuments({ formData, propertyId: undefined })
             .unwrap()
-            .then(({ fields, filePaths }) => {
-                _updateForm((data) => ({
-                    ...data,
-                    ...fields,
-                }));
-                _setFilePaths((prev) => [...prev, ...filePaths]);
-                document.getElementById('my_modal_3')?.closest('dialog')?.close();
-                _showToast({
-                    message: 'Files uploaded successfully',
-                    type: 'success',
-                });
-            })
-            .catch(() => {
-                _showToast({
-                    message: 'Error uploading files. Please try again.',
-                    type: 'error',
-                });
-            });
+            .then(() => toast.success('Files uploaded successfully'))
+            .catch(() => toast.error('Failed to upload files'));
     }, []);
 
-    const [_createProperty, { isLoading: isCreatePropertyLoading }] = useCreatePropertyMutation();
-
-    const _handleCreateProperty = useCallback(
-        async (body: PropertyIdForm) => {
-            await _createProperty({
-                ...body,
-                acquisitionValue: +body.acquisitionValue,
-                garden: +body.garden,
-                balcony: +body.balcony,
-                acquisitionDate: body.acquisitionDate,
-                privateGrossArea: +body.privateGrossArea,
-                dependentGrossArea: +body.dependentGrossArea,
-                assetValue: +body.assetValue,
+    const _handleProcessDocument = useCallback(async (fileUrl: string, _uploadForm: UseFormReset<PropertyIdForm>) => {
+        _processDocument({ fileUrl })
+            .unwrap()
+            .then(({ fields }) => {
+                toast.success('Document processed successfully');
+                _uploadForm(fields);
             })
-                .unwrap()
-                .then(() => {
-                    document.getElementById('my_modal_3')?.closest('dialog')?.close();
-                    _showToast({
-                        message: 'Property created successfully',
-                        type: 'success',
-                    });
-                })
-                .catch(() => {
-                    _showToast({
-                        message: 'Error creating property. Please try again.',
-                        type: 'error',
-                    });
-                });
-        },
-        [filePaths],
-    );
+            .catch(() => toast.error('Failed to process document'));
+    }, []);
+
+    const _handleCreateProperty = useCallback((data: PropertyIdForm) => {
+        const numericFields = [
+            'acquisitionValue',
+            'privateGrossArea',
+            'dependentGrossArea',
+            'garden',
+            'balcony',
+            'assetValue',
+            'monthlyIncome',
+            'price',
+            'stampDuty',
+            'deedExpenses',
+            'imtPaid',
+        ] as const;
+
+        const processedData = {
+            ...data,
+            ...numericFields.reduce(
+                (acc, field) => {
+                    const value = data[field] as string | number | undefined;
+                    if (value !== undefined && value !== '') {
+                        acc[field] = Number(value);
+                    }
+
+                    if (value === '') {
+                        acc[field] = null;
+                    }
+                    return acc;
+                },
+                {} as { [key: string]: number | null },
+            ),
+        };
+
+        _createProperty(processedData)
+            .unwrap()
+            .then(() => {
+                toast.success('Property created successfully');
+                navigate('/home/my-properties');
+            })
+            .catch(() => toast.error('Failed to create property'));
+    }, []);
 
     return {
         isUploadFilesLoading,
+        isProcessingDocument,
         isCreatePropertyLoading,
         _handleUploadFiles,
+        _handleProcessDocument,
         _handleCreateProperty,
     };
 }

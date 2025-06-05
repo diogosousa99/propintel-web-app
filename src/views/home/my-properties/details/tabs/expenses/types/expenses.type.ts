@@ -1,7 +1,7 @@
 export interface ExpensesForm {
     name?: string;
-    category: number;
-    value: number;
+    category: string;
+    value: string;
     date: string;
-    description: string;
+    description?: string;
 }

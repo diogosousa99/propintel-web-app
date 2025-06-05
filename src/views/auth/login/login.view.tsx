@@ -1,14 +1,17 @@
 import { LOGIN_FORM_FIELDS } from './constants';
 import { useLoginViewModel } from './hooks';
-import { clsx } from 'clsx';
 import { Login } from '@store';
 import LoginImg from '../../../assets/login.jpg';
 import { FieldErrors } from 'react-hook-form';
 import { LogoLarge } from '@components';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Label } from '../../../components/ui/label';
+import { cn } from '../../../lib/utils';
 
 const inputClassName = (field: keyof Login, errors: FieldErrors<Login>) => {
-    return clsx('input w-full', {
-        'input-error': errors[field],
+    return cn('w-full', {
+        'border-destructive': errors[field],
     });
 };
 
@@ -27,33 +30,39 @@ export default function LoginView() {
                     <LogoLarge />
                 </div>
                 <form className="flex flex-col items-center p-32 pt-0 gap-8" onSubmit={handleSubmit(_handleLogin)}>
-                    <div className="w-full">
-                        <legend className="text-xs pl-2">Email*</legend>
-                        <input
+                    <div className="w-full space-y-2">
+                        <Label htmlFor={LOGIN_FORM_FIELDS.email}>Email*</Label>
+                        <Input
+                            id={LOGIN_FORM_FIELDS.email}
                             className={inputClassName(LOGIN_FORM_FIELDS.email, errors)}
                             placeholder="Email"
                             {...register(LOGIN_FORM_FIELDS.email)}
                         />
                         {errors[LOGIN_FORM_FIELDS.email] ? (
-                            <span className="text-xs text-error">{errors[LOGIN_FORM_FIELDS.email]?.message}</span>
+                            <span className="text-xs text-destructive">{errors[LOGIN_FORM_FIELDS.email]?.message}</span>
                         ) : null}
                     </div>
-                    <div className="w-full">
-                        <legend className="text-xs pl-2">Password*</legend>
-                        <input
+                    <div className="w-full space-y-2">
+                        <Label htmlFor={LOGIN_FORM_FIELDS.password}>Password*</Label>
+                        <Input
+                            id={LOGIN_FORM_FIELDS.password}
                             className={inputClassName(LOGIN_FORM_FIELDS.password, errors)}
                             type="password"
                             placeholder="Password"
                             {...register(LOGIN_FORM_FIELDS.password)}
                         />
                         {errors[LOGIN_FORM_FIELDS.password] ? (
-                            <span className="text-xs text-error">{errors[LOGIN_FORM_FIELDS.password]?.message}</span>
+                            <span className="text-xs text-destructive">
+                                {errors[LOGIN_FORM_FIELDS.password]?.message}
+                            </span>
                         ) : null}
                     </div>
-                    <button className="btn w-full" type="submit">
-                        {isLoginLoading ? <span className="loading loading-spinner" /> : null}
+                    <Button className="w-full" type="submit" disabled={isLoginLoading}>
+                        {isLoginLoading ? (
+                            <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                        ) : null}
                         Login
-                    </button>
+                    </Button>
                 </form>
             </div>
         </div>

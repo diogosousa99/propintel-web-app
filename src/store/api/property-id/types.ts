@@ -26,18 +26,20 @@ export interface PropertyIdFileUploadResponse {
 
 export interface ProcessDocumentResponse {
     fields: {
-        privateGrossArea: string;
-        dependentGrossArea: string;
+        privateGrossArea: number;
+        dependentGrossArea: number;
         typology: string;
         fraction: string;
         affectation: string;
-        assetValue: string;
+        assetValue: number;
     };
     fileUrl: string;
 }
 
 export interface UserDocumentsResponse {
     documents: Array<{
+        id: number;
+        propertyId: number | null;
         name: string;
         url: string;
         type: 'pdf' | 'image';

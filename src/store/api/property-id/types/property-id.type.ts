@@ -26,6 +26,12 @@ export type CreateProperty = {
     energyCertificate: string;
     assetValue: number;
     state: string;
+    taxId: string;
+    landRegistryArticle: string;
+    price: number;
+    stampDuty: number;
+    deedExpenses: number;
+    imtPaid: number;
 };
 
 export type ProcessDocumentResponse = {

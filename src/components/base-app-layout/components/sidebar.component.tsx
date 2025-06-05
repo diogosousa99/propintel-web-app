@@ -1,79 +1,135 @@
-import { ReactNode, useEffect, useRef } from 'react';
-import { NavLink, useLocation } from 'react-router-dom';
+import { NavLink } from 'react-router-dom';
 import { clsx } from 'clsx';
 import { SidebarMenu } from '@types';
+import { Logo } from '@components/logo.component';
 import { LogoCompact } from '../../logo-compact.component';
-import { Header } from './header.component';
 import { HeaderMenu } from '@types';
-import { Bars3Icon } from '@heroicons/react/24/outline';
+import { Separator } from '@components/ui/separator';
+import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@components/ui/dropdown-menu';
+import { useSessionUser } from '@store';
+import { ChevronDownIcon } from '@heroicons/react/24/outline';
 
 type Props = {
     sidebarMenu: SidebarMenu[];
-    headerMenu: HeaderMenu[];
-    children: ReactNode;
+    userMenu: HeaderMenu[];
 };
 
-export function Sidebar({ sidebarMenu, headerMenu, children }: Props) {
-    const drawerRef = useRef<HTMLInputElement>(null);
-    const location = useLocation();
+function getInitials(name: string) {
+    return name
+        .split(' ')
+        .map((n) => n[0])
+        .join('')
+        .toUpperCase();
+}
 
-    useEffect(() => {
-        const mediaQuery = window.matchMedia('(min-width: 1024px)');
+export function Sidebar({ sidebarMenu, userMenu }: Props) {
+    const { name, email } = useSessionUser();
 
-        const handleResize = () => {
-            if (mediaQuery.matches && drawerRef.current?.checked) {
-                drawerRef.current.checked = false;
-            }
-        };
+    const sidebarItemClassNames = (isActive: boolean, mini = false) =>
+        clsx(
+            'flex items-center w-full',
+            mini ? 'justify-center h-12' : 'gap-1.5 px-4 py-2',
+            'transition-all duration-200 ease-in-out rounded-md',
+            {
+                'bg-white/20': isActive,
+                'hover:bg-white/10': !isActive,
+            },
+        );
 
-        mediaQuery.addEventListener('change', handleResize);
-        return () => mediaQuery.removeEventListener('change', handleResize);
-    }, []);
-
-    useEffect(() => {
-        if (drawerRef.current?.checked) {
-            drawerRef.current.checked = false;
-        }
-    }, [location.pathname]);
-
-    const sidebarItemClassNames = (isActive: boolean) =>
-        clsx('flex items-center w-full gap-1.5 px-4 py-2 transition-all duration-200 ease-in-out border-b', {
-            'border-white': isActive,
-            'border-transparent hover:border-white': !isActive,
-        });
+    const SidebarContent = ({ mini = false }: { mini?: boolean }) => (
+        <nav
+            className={`fixed top-0 left-0 ${mini ? 'w-20' : 'w-56'} h-screen text-white min-h-full p-4 flex flex-col items-center`}
+            style={{ backgroundColor: '#089c77' }}
+        >
+            <div className="flex justify-center h-16 pb-6 items-center w-full">
+                {mini ? <Logo width={32} height={32} /> : <LogoCompact />}
+            </div>
+            <div className="flex-1 w-full flex flex-col items-center gap-2 mb-6">
+                {sidebarMenu.map(({ icon, name, to }) => (
+                    <NavLink key={to} to={to} className={`w-full`}>
+                        {({ isActive }) => (
+                            <div
+                                className={clsx(
+                                    sidebarItemClassNames(isActive, mini),
+                                    'h-12 rounded-md',
+                                    mini ? 'w-12' : '',
+                                )}
+                            >
+                                {icon}
+                                {!mini && <span className="text-sm">{name}</span>}
+                            </div>
+                        )}
+                    </NavLink>
+                ))}
+            </div>
+            <Separator className="bg-white my-4 w-full" />
+            <div className="flex items-center gap-2 w-full justify-center">
+                <DropdownMenu>
+                    <DropdownMenuTrigger asChild className="w-full">
+                        <button
+                            className={clsx(
+                                'flex items-center gap-2 w-full px-3 py-2 rounded-md transition-all hover:bg-white/10 focus:bg-white/20 focus:outline-none',
+                                mini && 'justify-center px-0',
+                            )}
+                        >
+                            <div className="w-8 h-8 rounded-full bg-green-800 flex items-center justify-center text-white font-bold text-base">
+                                {getInitials(name)}
+                            </div>
+                            {!mini && (
+                                <>
+                                    <span className="text-sm font-semibold truncate max-w-[90px]">{name}</span>
+                                    <ChevronDownIcon className="w-5 h-5 text-green-100" />
+                                </>
+                            )}
+                        </button>
+                    </DropdownMenuTrigger>
+                    <DropdownMenuContent
+                        side="right"
+                        align="end"
+                        sideOffset={40}
+                        className="w-56 mt-2 p-0 overflow-hidden"
+                    >
+                        <div className="px-4 py-3 flex items-center gap-3">
+                            <div className="w-10 h-10 rounded-full bg-green-800 flex items-center justify-center text-white font-bold text-lg">
+                                {getInitials(name)}
+                            </div>
+                            <div className="flex flex-col min-w-0">
+                                <span className="font-semibold text-base text-green-900 dark:text-white truncate">
+                                    {name}
+                                </span>
+                                {email && (
+                                    <span className="text-xs text-green-900/70 dark:text-green-100/70 truncate">
+                                        {email}
+                                    </span>
+                                )}
+                            </div>
+                        </div>
+                        <div className="border-t border-green-200 my-1" />
+                        <div className="py-1">
+                            {userMenu.map(({ name, action }) => (
+                                <DropdownMenuItem
+                                    key={name}
+                                    onClick={action}
+                                    className="cursor-pointer px-4 py-2 hover:bg-green-700/20 focus:bg-green-700/30 text-green-900 dark:text-white"
+                                >
+                                    {name}
+                                </DropdownMenuItem>
+                            ))}
+                        </div>
+                    </DropdownMenuContent>
+                </DropdownMenu>
+            </div>
+        </nav>
+    );
 
     return (
-        <div className="drawer lg:drawer-open">
-            <input id="my-drawer" type="checkbox" className="drawer-toggle" ref={drawerRef} />
-            <div className="drawer-content flex flex-col min-h-screen">
-                <div className="flex items-center justify-between h-16 bg-primary-content text-white px-4">
-                    <div className="lg:hidden flex gap-2 items-center">
-                        <label htmlFor="my-drawer" className="btn btn-primary btn-ghost btn-square lg:hidden">
-                            <Bars3Icon color="white" height={20} />
-                        </label>
-                    </div>
-                    <Header menu={headerMenu} />
-                </div>
-                {children}
+        <>
+            <div className="block lg:hidden">
+                <SidebarContent mini />
             </div>
-            <div className="drawer-side">
-                <label htmlFor="my-drawer" aria-label="close sidebar" className="drawer-overlay" />
-                <nav className="w-56 bg-primary-content text-white min-h-full p-4">
-                    <div className="flex justify-center h-16 pb-6 items-center">
-                        <LogoCompact />
-                    </div>
-                    {sidebarMenu.map(({ icon, name, to }) => (
-                        <NavLink key={to} to={to} className="flex items-center gap-1.5 px-1 py-2 w-full">
-                            {({ isActive }) => (
-                                <div className={sidebarItemClassNames(isActive)}>
-                                    {icon}
-                                    <span className="text-sm">{name}</span>
-                                </div>
-                            )}
-                        </NavLink>
-                    ))}
-                </nav>
+            <div className="hidden lg:block">
+                <SidebarContent />
             </div>
-        </div>
+        </>
     );
 }

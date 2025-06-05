@@ -6,3 +6,5 @@ export * from './pagination';
 export * from './sort-icon.component';
 export * from './logo-large.component';
 export * from './logo-compact.component';
+export * from './ui/textarea';
+export * from './logo.component';

@@ -1,428 +1,493 @@
-import { ModuleTitle } from '@components';
-import { ArrowUpTrayIcon, PlusIcon, DocumentIcon, CheckCircleIcon } from '@heroicons/react/24/outline';
-import { useState } from 'react';
-import { DayPicker } from 'react-day-picker';
-import { usePropertyIdViewModel } from './hooks';
-import { PROPERTY_ID_FORM_FIELDS } from './constants';
-import { inputClassName } from '@helpers';
-import { Controller } from 'react-hook-form';
-import { UserDocumentsResponse } from '@store';
-import { usePropertyIdApiActions } from './test-hooks';
+import { useEffect } from 'react';
+import { usePropertyIdViewModel } from './hooks/use-property-id-view-model.hook';
+import { ModuleTitle } from '../../../components/module-title.component';
+import { Button } from '../../../components/ui/button';
+import { Input } from '../../../components/ui/input';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from '../../../components/ui/dialog';
+import { Card, CardContent } from '../../../components/ui/card';
+import { DatePicker } from '../../../components/ui/date-picker';
+import { usePropertyIdApiActions } from './hooks';
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
+import { ArrowUpTrayIcon } from '@heroicons/react/24/outline';
+import { toast } from 'sonner';
+import { Form, FormControl, FormField, FormItem, FormLabel, FormMessage } from '../../../components/ui/form';
 
-export default function PropertyId() {
-    const [acquisitionDate, _setAcquisitionDate] = useState<Date | undefined>();
-    const [files, setFiles] = useState<FileList | null>(null);
-    const [isProcessing, setIsProcessing] = useState(false);
-    const [showSuccess, setShowSuccess] = useState(false);
-
-    const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-        setFiles(e.target.files);
-    };
-
-    const { propertyIdForm } = usePropertyIdViewModel();
+const PropertyId = () => {
+    const {
+        isUploadModalOpen,
+        propertyIdForm,
+        selectedFiles,
+        userDocuments,
+        _setIsUploadModalOpen,
+        _setSelectedFiles,
+    } = usePropertyIdViewModel();
 
     const {
         isUploadFilesLoading,
         isCreatePropertyLoading,
-        _handleCreateProperty,
-        handleProcessDocument,
-        isLoadingDocuments,
-        userDocuments,
+        isProcessingDocument,
         _handleUploadFiles,
+        _handleCreateProperty,
+        _handleProcessDocument,
     } = usePropertyIdApiActions();
 
-    const { register, formState, reset, handleSubmit, setValue } = propertyIdForm;
-
-    const { errors } = formState;
-
-    const handleProcessExistingDocument = async (fileUrl: string) => {
-        setIsProcessing(true);
-        const modal = document.getElementById('my_modal_3')?.closest('dialog');
-        if (modal) {
-            (modal as HTMLDialogElement).close();
+    useEffect(() => {
+        if (isProcessingDocument) {
+            toast.loading('Processing document...', { id: 'processing-document' });
+        } else {
+            toast.dismiss('processing-document');
         }
-
-        const fields = await handleProcessDocument(fileUrl);
-        if (fields) {
-            setValue(PROPERTY_ID_FORM_FIELDS.typology, fields.typology);
-            setValue(PROPERTY_ID_FORM_FIELDS.fraction, fields.fraction);
-            setValue(PROPERTY_ID_FORM_FIELDS.affectation, fields.affectation);
-            setValue(PROPERTY_ID_FORM_FIELDS.privateGrossArea, fields.privateGrossArea);
-            setValue(PROPERTY_ID_FORM_FIELDS.dependentGrossArea, fields.dependentGrossArea);
-            setValue(PROPERTY_ID_FORM_FIELDS.assetValue, fields.assetValue);
-
-            setShowSuccess(true);
-            setTimeout(() => {
-                setShowSuccess(false);
-            }, 5000);
-        }
-        setIsProcessing(false);
-    };
+    }, [isProcessingDocument]);
 
     return (
-        <>
-            <dialog
-                id="my_modal_3"
-                className="modal"
-                onClick={(e) => {
-                    const dialog = e.currentTarget;
-                    if (e.target === dialog) {
-                        dialog.close();
-                    }
-                }}
-            >
-                <div className="modal-box">
-                    <form method="dialog">
-                        <button className="btn btn-sm btn-circle btn-ghost absolute right-2 top-2">✕</button>
-                    </form>
-                    <h3 className="font-bold text-lg">Upload multiple files</h3>
-                    <p className="py-4 text-xs">
-                        You can upload multiple files at once. The accepted formats are .pdf, .jpg, .jpeg, and .png.
-                        <br />
-                        The algorithm could not detect every field, if so, you will have to fill them manually.
-                    </p>
-                    <input
-                        type="file"
-                        className="file-input w-full"
-                        onChange={handleFileChange}
-                        multiple
-                        accept=".pdf,.jpg,.jpeg,.png"
-                    />
-                    <div className="modal-action">
-                        <button
-                            className="btn btn-neutral text-white"
-                            type="button"
-                            onClick={() => {
-                                if (files) _handleUploadFiles(Array.from(files), reset);
-                            }}
-                        >
-                            {isUploadFilesLoading ? <span className="loading loading-spinner" /> : null}
-                            Upload
-                        </button>
-                        <button
-                            className="btn"
-                            type="button"
-                            onClick={() => document.getElementById('my_modal_3')?.closest('dialog')?.close()}
-                        >
-                            Cancel
-                        </button>
-                    </div>
-
-                    {/* Documents List */}
-                    <div className="divider">Uploaded Documents</div>
-                    {isLoadingDocuments ? (
-                        <div className="flex justify-center py-4">
-                            <span className="loading loading-spinner loading-lg" />
-                        </div>
-                    ) : (
-                        <div className="flex flex-col gap-2 max-h-96 overflow-y-auto">
-                            {userDocuments?.documents.map((doc: UserDocumentsResponse['documents'][0]) => (
-                                <div
-                                    key={doc.url}
-                                    className="card card-compact bg-base-100 hover:bg-base-200 transition-colors cursor-pointer"
-                                    onClick={() => handleProcessExistingDocument(doc.url)}
-                                >
-                                    <div className="card-body flex-row items-center gap-3 p-3">
-                                        <div className="bg-primary/10 p-2 rounded-lg">
-                                            <DocumentIcon className="h-5 w-5 text-primary" />
-                                        </div>
-                                        <div className="flex-1 min-w-0 overflow-hidden">
-                                            <h3 className="card-title text-sm w-full line-clamp-1">{doc.name}</h3>
-                                            <p className="text-xs text-base-content/60">
-                                                {new Date(doc.createdAt).toLocaleDateString()}
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            ))}
-                        </div>
-                    )}
-                </div>
-            </dialog>
-
-            <div className="flex flex-col gap-6 px-12 py-22 h-full">
-                <div className="flex justify-between">
-                    <ModuleTitle title="Property ID" subtitle="Add a new property" />
-                    <div className="flex gap-4 items-center">
-                        {isProcessing ? (
-                            <div className="flex items-center gap-2 text-sm text-base-content/60">
-                                <span className="loading loading-spinner loading-sm" />
-                                Processing document...
-                            </div>
-                        ) : null}
-                        {showSuccess ? (
-                            <div className="text-success text-sm">Document processed successfully!</div>
-                        ) : null}
-                        <button
-                            className="btn btn-outline"
-                            type="button"
-                            onClick={() => (document.getElementById('my_modal_3') as HTMLDialogElement)?.showModal()}
-                        >
-                            <ArrowUpTrayIcon height={18} />
-                            Upload Files
-                        </button>
-                        <button className="btn btn-neutral text-white" type="submit">
-                            {isCreatePropertyLoading ? (
-                                <span className="loading loading-spinner" />
-                            ) : (
-                                <PlusIcon height={18} />
-                            )}
-                            Add
-                        </button>
-                    </div>
-                </div>
-                <form
-                    onSubmit={handleSubmit((data) => {
-                        _handleCreateProperty(data);
-                    })}
-                >
-                    <div className="grid grid-cols-2 gap-8">
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Name*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.name, errors)}
-                                placeholder="Name"
-                                {...register(PROPERTY_ID_FORM_FIELDS.name)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.name] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.name]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Localization*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.localization, errors)}
-                                placeholder="Localization"
-                                {...register(PROPERTY_ID_FORM_FIELDS.localization)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.localization] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.localization]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Acquisition Value (€)*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.acquisitionValue, errors)}
-                                placeholder="Acquisition Value"
-                                type="number"
-                                {...register(PROPERTY_ID_FORM_FIELDS.acquisitionValue)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.acquisitionValue] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.acquisitionValue]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Acquisition Date*</legend>
-                            <button
-                                popoverTarget="rdp-popover"
-                                type="button"
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.acquisitionDate, errors)}
-                                style={{ anchorName: '--rdp' } as React.CSSProperties}
-                            >
-                                {acquisitionDate ? acquisitionDate.toLocaleDateString() : 'Acquisition Date'}
-                            </button>
-                            <div
-                                popover="auto"
-                                id="rdp-popover"
-                                className="dropdown"
-                                style={{ positionAnchor: '--rdp' } as React.CSSProperties}
-                            >
-                                <Controller
-                                    name={PROPERTY_ID_FORM_FIELDS.acquisitionDate}
+        <div className="p-4 sm:p-6 md:p-8 lg:p-12 h-full">
+            <ModuleTitle title="Property ID" subtitle="Add a new property" />
+            <div className="flex justify-end mb-4 gap-2">
+                <Button onClick={() => _setIsUploadModalOpen(true)} className="gap-2">
+                    <ArrowUpTrayIcon className="w-4 h-4" />
+                    Upload Documents
+                </Button>
+            </div>
+            <Card>
+                <CardContent className="p-4 sm:p-6">
+                    <Form {...propertyIdForm}>
+                        <form onSubmit={propertyIdForm.handleSubmit(_handleCreateProperty)} className="space-y-4">
+                            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                                <FormField
                                     control={propertyIdForm.control}
-                                    render={({ field: { onChange } }) => (
-                                        <DayPicker
-                                            className="react-day-picker"
-                                            mode="single"
-                                            captionLayout="dropdown"
-                                            selected={acquisitionDate}
-                                            onSelect={(date) => {
-                                                _setAcquisitionDate(date);
-                                                onChange(date?.toISOString());
-                                            }}
-                                        />
+                                    name="name"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Name *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
                                     )}
                                 />
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="localization"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Localization *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="acquisitionValue"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Acquisition Value *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="taxId"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Tax ID *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="landRegistryArticle"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Land Registry Article *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="price"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Price *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="stampDuty"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Stamp Duty *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="deedExpenses"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Deed Expenses *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="imtPaid"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>IMT Paid *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="acquisitionDate"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Acquisition Date *</FormLabel>
+                                            <FormControl>
+                                                <DatePicker
+                                                    date={field.value ? new Date(field.value) : undefined}
+                                                    onSelect={(date) => field.onChange(date?.toISOString())}
+                                                />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="typology"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Typology *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="fraction"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Fraction *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="affectation"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Affectation *</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="category"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Category *</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select category" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="On Hold">On Hold</SelectItem>
+                                                    <SelectItem value="Trading">Trading</SelectItem>
+                                                    <SelectItem value="Arrendamento">Arrendamento</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="privateGrossArea"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Private Gross Area *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="dependentGrossArea"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Dependent Gross Area *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="garden"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Garden</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="balcony"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Balcony</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="energyCertificate"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Energy Certificate</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select energy certificate" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="A+">A+</SelectItem>
+                                                    <SelectItem value="A">A</SelectItem>
+                                                    <SelectItem value="B">B</SelectItem>
+                                                    <SelectItem value="B-">B-</SelectItem>
+                                                    <SelectItem value="C">C</SelectItem>
+                                                    <SelectItem value="D">D</SelectItem>
+                                                    <SelectItem value="E">E</SelectItem>
+                                                    <SelectItem value="F">F</SelectItem>
+                                                    <SelectItem value="G">G</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="assetValue"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>Asset Value *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="state"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel>State *</FormLabel>
+                                            <Select onValueChange={field.onChange} value={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select state" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="New">New</SelectItem>
+                                                    <SelectItem value="Used">Used</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                {propertyIdForm.watch('category') === 'Arrendamento' && (
+                                    <FormField
+                                        control={propertyIdForm.control}
+                                        name="monthlyIncome"
+                                        render={({ field }) => (
+                                            <FormItem>
+                                                <FormLabel>Monthly Income *</FormLabel>
+                                                <FormControl>
+                                                    <Input type="text" inputMode="numeric" {...field} />
+                                                </FormControl>
+                                                <FormMessage />
+                                            </FormItem>
+                                        )}
+                                    />
+                                )}
                             </div>
-                            {errors[PROPERTY_ID_FORM_FIELDS.acquisitionDate] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.acquisitionDate]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Typology*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.typology, errors)}
-                                placeholder="Typology"
-                                {...register(PROPERTY_ID_FORM_FIELDS.typology)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.typology] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.typology]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Fraction*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.fraction, errors)}
-                                placeholder="Fraction"
-                                {...register(PROPERTY_ID_FORM_FIELDS.fraction)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.fraction] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.fraction]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Affectation*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.affectation, errors)}
-                                placeholder="Affectation"
-                                {...register(PROPERTY_ID_FORM_FIELDS.affectation)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.affectation] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.affectation]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Category*</legend>
-                            <select
-                                defaultValue="Energy Certificate"
-                                className="select w-full"
-                                {...register(PROPERTY_ID_FORM_FIELDS.category)}
-                            >
-                                <option>On Hold</option>
-                                <option>Trading</option>
-                                <option>Lease</option>
-                            </select>
-                            {errors[PROPERTY_ID_FORM_FIELDS.energyCertificate] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.energyCertificate]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Private Gross Area (m2)*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.privateGrossArea, errors)}
-                                placeholder="Private Gross Area"
-                                type="number"
-                                {...register(PROPERTY_ID_FORM_FIELDS.privateGrossArea)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.privateGrossArea] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.privateGrossArea]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Dependent Gross Area (m2)*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.dependentGrossArea, errors)}
-                                placeholder="Dependent Gross Area"
-                                type="number"
-                                {...register(PROPERTY_ID_FORM_FIELDS.dependentGrossArea)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.dependentGrossArea] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.dependentGrossArea]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Garden (m2)</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.garden, errors)}
-                                placeholder="Garden"
-                                type="number"
-                                {...register(PROPERTY_ID_FORM_FIELDS.garden)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.garden] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.garden]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Balcony (m2)</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.balcony, errors)}
-                                placeholder="Balcony"
-                                type="number"
-                                {...register(PROPERTY_ID_FORM_FIELDS.balcony)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.balcony] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.balcony]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Energy Certificate*</legend>
-                            <select
-                                defaultValue="Energy Certificate"
-                                className="select w-full"
-                                {...register(PROPERTY_ID_FORM_FIELDS.energyCertificate)}
-                            >
-                                <option>A+</option>
-                                <option>A</option>
-                                <option>B</option>
-                                <option>B-</option>
-                                <option>C</option>
-                                <option>D</option>
-                                <option>E</option>
-                                <option>F</option>
-                            </select>
-                            {errors[PROPERTY_ID_FORM_FIELDS.energyCertificate] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.energyCertificate]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">Asset Value (€)*</legend>
-                            <input
-                                className={inputClassName(PROPERTY_ID_FORM_FIELDS.assetValue, errors)}
-                                placeholder="Asset Value"
-                                type="number"
-                                {...register(PROPERTY_ID_FORM_FIELDS.assetValue)}
-                            />
-                            {errors[PROPERTY_ID_FORM_FIELDS.assetValue] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.assetValue]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                        <div className="w-full">
-                            <legend className="text-xs pl-2">State*</legend>
-                            <select
-                                defaultValue="Energy Certificate"
-                                className="select w-full"
-                                {...register(PROPERTY_ID_FORM_FIELDS.state)}
-                            >
-                                <option>New</option>
-                                <option>Used</option>
-                            </select>
-                            {errors[PROPERTY_ID_FORM_FIELDS.state] ? (
-                                <span className="text-xs text-error">
-                                    {errors[PROPERTY_ID_FORM_FIELDS.state]?.message}
-                                </span>
-                            ) : null}
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </>
+                            <div className="flex justify-end">
+                                <Button
+                                    type="submit"
+                                    disabled={isCreatePropertyLoading || !propertyIdForm.formState.isValid}
+                                    className="w-full sm:w-auto"
+                                >
+                                    {isCreatePropertyLoading ? (
+                                        <div className="animate-spin mr-2 h-4 w-4 rounded-full border-2 border-white border-t-transparent" />
+                                    ) : null}
+                                    {isCreatePropertyLoading ? 'Creating...' : 'Create'}
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </CardContent>
+            </Card>
+            <Dialog open={isUploadModalOpen} onOpenChange={_setIsUploadModalOpen}>
+                <DialogContent className="sm:max-w-[425px]">
+                    <DialogHeader>
+                        <DialogTitle>Upload Documents</DialogTitle>
+                        <DialogDescription>
+                            Upload property documents to process and extract information automatically.
+                        </DialogDescription>
+                    </DialogHeader>
+                    <Form {...propertyIdForm}>
+                        <form className="space-y-4">
+                            <div className="space-y-2">
+                                <FormLabel>Select Files</FormLabel>
+                                <Input
+                                    type="file"
+                                    multiple
+                                    accept=".pdf,.jpg,.jpeg,.png"
+                                    onChange={(e) => _setSelectedFiles(Array.from(e.target.files ?? []))}
+                                />
+                            </div>
+                            <div>
+                                <FormLabel>Uploaded Documents</FormLabel>
+                                <div className="space-y-2 max-w-full overflow-x-auto">
+                                    {userDocuments?.documents.length ? (
+                                        userDocuments.documents.map((doc) => (
+                                            <div
+                                                key={doc.url}
+                                                className="flex items-center justify-between border rounded px-3 py-2 bg-muted/50 w-full"
+                                            >
+                                                <div className="flex items-center gap-2 min-w-0 flex-1">
+                                                    <span className="ellipsis" title={doc.name}>
+                                                        {doc.name}
+                                                    </span>
+                                                </div>
+                                                <Button
+                                                    size="sm"
+                                                    variant="outline"
+                                                    onClick={() => {
+                                                        _setIsUploadModalOpen(false);
+                                                        _handleProcessDocument(doc.url, propertyIdForm.reset);
+                                                    }}
+                                                    disabled={isProcessingDocument}
+                                                >
+                                                    Process
+                                                </Button>
+                                            </div>
+                                        ))
+                                    ) : (
+                                        <div className="text-xs text-muted-foreground">No documents uploaded yet.</div>
+                                    )}
+                                </div>
+                            </div>
+                            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 items-center">
+                                <Button
+                                    variant="outline"
+                                    onClick={() => _setIsUploadModalOpen(false)}
+                                    className="w-full sm:w-auto"
+                                >
+                                    Cancel
+                                </Button>
+                                <Button
+                                    onClick={() => _handleUploadFiles(selectedFiles)}
+                                    disabled={selectedFiles.length === 0 || isUploadFilesLoading}
+                                    className="w-full sm:w-auto"
+                                >
+                                    {isUploadFilesLoading ? (
+                                        <div className="animate-spin mr-2 h-4 w-4 rounded-full border-2 border-primary border-t-transparent" />
+                                    ) : null}
+                                    {isUploadFilesLoading ? 'Uploading...' : 'Upload'}
+                                </Button>
+                            </div>
+                        </form>
+                    </Form>
+                </DialogContent>
+            </Dialog>
+        </div>
     );
-}
+};
+
+export default PropertyId;

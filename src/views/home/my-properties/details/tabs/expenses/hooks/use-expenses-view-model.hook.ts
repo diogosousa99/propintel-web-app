@@ -53,10 +53,12 @@ function useProcessExpenses(expensesList?: PropertyExpenses, expensesCategories?
             ...expenses.map((expense) => ({
                 ...expense,
                 categoryName: expensesCategories?.indexed[expense.categoryId]?.name,
+                isOtherExpense: false,
             })),
             ...otherExpenses.map((expense) => ({
                 ...expense,
                 categoryName: expense.name,
+                isOtherExpense: true,
             })),
         ];
     }, [expenses, otherExpenses, expensesCategories]);

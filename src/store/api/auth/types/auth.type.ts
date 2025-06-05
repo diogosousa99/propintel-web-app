@@ -14,6 +14,10 @@ export type Portfolio = {
     garden: number;
     localization: string;
     privateGrossArea: number;
+    price: number;
+    stampDuty: number;
+    deedExpenses: number;
+    imtPaid: number;
     propertyExpenses: {
         id: number;
         category: {
@@ -24,10 +28,18 @@ export type Portfolio = {
         date: string;
         description?: string;
     }[];
+    otherExpenses: {
+        id: number;
+        name: string;
+        value: number;
+        date: string;
+        description?: string;
+    }[];
     state: string;
     status: boolean;
     typology: string;
     updatedAt: string;
+    monthlyIncome?: number;
 };
 
 export type UserSession = {

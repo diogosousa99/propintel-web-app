@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { BaseAppLayout } from '@components';
+import { BaseAppLayout } from '@components/base-app-layout/base-app-layout.component';
 import { useAppHome, useLogoutApiActions } from '@hooks';
 import { PlusCircleIcon, DocumentIcon, HomeIcon, ChartPieIcon } from '@heroicons/react/24/outline';
 
@@ -12,7 +12,7 @@ export default function Home({ children }: Props) {
 
     const { _handleLogout } = useLogoutApiActions();
 
-    const SIDEBAR_MENU = useMemo(
+    const sidebarMenu = useMemo(
         () => [
             {
                 name: 'Dashboard',
@@ -38,7 +38,7 @@ export default function Home({ children }: Props) {
         [],
     );
 
-    const HEADER_MENU = useMemo(
+    const userMenu = useMemo(
         () => [
             {
                 name: 'Logout',
@@ -49,7 +49,7 @@ export default function Home({ children }: Props) {
     );
 
     return (
-        <BaseAppLayout sidebarMenu={SIDEBAR_MENU} headerMenu={HEADER_MENU}>
+        <BaseAppLayout sidebarMenu={sidebarMenu} userMenu={userMenu}>
             {children}
         </BaseAppLayout>
     );
