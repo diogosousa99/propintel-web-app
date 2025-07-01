@@ -67,6 +67,17 @@ export default function PropertyDocuments() {
         }
     };
 
+    const handleOpenUploadModal = () => {
+        console.log('Opening upload modal');
+        _setIsUploadModalOpen(true);
+    };
+
+    const handleCloseUploadModal = () => {
+        console.log('Closing upload modal');
+        _setIsUploadModalOpen(false);
+        _setSelectedFiles([]);
+    };
+
     if (!documents?.documents?.length) {
         return (
             <>
@@ -78,13 +89,13 @@ export default function PropertyDocuments() {
                         <h3 className="text-lg font-semibold text-foreground">No documents found</h3>
                         <p className="text-sm text-muted-foreground">This property doesn't have any documents yet.</p>
                     </div>
-                    <Button onClick={() => _setIsUploadModalOpen(true)}>
+                    <Button onClick={handleOpenUploadModal} type="button">
                         <ArrowUpTrayIcon className="w-4 h-4 mr-2" />
                         Upload Document
                     </Button>
                 </div>
 
-                <Dialog open={isUploadModalOpen} onOpenChange={_setIsUploadModalOpen}>
+                <Dialog open={isUploadModalOpen} onOpenChange={handleCloseUploadModal}>
                     <DialogContent className="bg-card border shadow-sm">
                         <DialogHeader>
                             <DialogTitle className="text-foreground">Upload Documents</DialogTitle>
@@ -115,18 +126,13 @@ export default function PropertyDocuments() {
                                 </div>
                             )}
                             <div className="flex justify-end space-x-2">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => {
-                                        _setSelectedFiles([]);
-                                        _setIsUploadModalOpen(false);
-                                    }}
-                                >
+                                <Button variant="outline" onClick={handleCloseUploadModal} type="button">
                                     Cancel
                                 </Button>
                                 <Button
                                     onClick={handleUpload}
                                     disabled={selectedFiles.length === 0 || isUploadFilesLoading}
+                                    type="button"
                                 >
                                     {isUploadFilesLoading ? (
                                         <>Uploading...</>
@@ -148,7 +154,7 @@ export default function PropertyDocuments() {
     return (
         <div className="space-y-6">
             <div className="flex justify-end">
-                <Button onClick={() => _setIsUploadModalOpen(true)}>
+                <Button onClick={handleOpenUploadModal} type="button">
                     <ArrowUpTrayIcon className="w-4 h-4 mr-2" />
                     Upload Document
                 </Button>
@@ -174,7 +180,12 @@ export default function PropertyDocuments() {
                                 </p>
                             </CardContent>
                             <CardFooter className="flex justify-end space-x-2">
-                                <Button variant="outline" size="sm" onClick={() => _setSelectedDocument(doc.url)}>
+                                <Button
+                                    variant="outline"
+                                    size="sm"
+                                    onClick={() => _setSelectedDocument(doc.url)}
+                                    type="button"
+                                >
                                     <EyeIcon className="w-4 h-4 mr-2" />
                                     View
                                 </Button>
@@ -182,6 +193,7 @@ export default function PropertyDocuments() {
                                     variant="destructive"
                                     size="sm"
                                     onClick={() => _setDeletingDocument({ id: doc.id, url: doc.url })}
+                                    type="button"
                                 >
                                     <TrashIcon className="w-4 h-4 mr-2" />
                                     Delete
@@ -234,6 +246,60 @@ export default function PropertyDocuments() {
                     </AlertDialogFooter>
                 </AlertDialogContent>
             </AlertDialog>
+
+            {/* Upload Modal for when documents exist */}
+            <Dialog open={isUploadModalOpen} onOpenChange={handleCloseUploadModal}>
+                <DialogContent className="bg-card border shadow-sm">
+                    <DialogHeader>
+                        <DialogTitle className="text-foreground">Upload Documents</DialogTitle>
+                    </DialogHeader>
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <Label htmlFor="files-upload" className="text-foreground">
+                                Select files to upload
+                            </Label>
+                            <Input
+                                id="files-upload"
+                                type="file"
+                                multiple
+                                onChange={handleFileChange}
+                                accept=".pdf,.doc,.docx,.xls,.xlsx,.jpg,.jpeg,.png,.gif"
+                            />
+                        </div>
+                        {selectedFiles.length > 0 && (
+                            <div className="space-y-2">
+                                <Label className="text-foreground">Selected files:</Label>
+                                <ul className="list-disc list-inside">
+                                    {selectedFiles.map((file, index) => (
+                                        <li key={index} className="text-sm text-muted-foreground">
+                                            {file.name}
+                                        </li>
+                                    ))}
+                                </ul>
+                            </div>
+                        )}
+                        <div className="flex justify-end space-x-2">
+                            <Button variant="outline" onClick={handleCloseUploadModal} type="button">
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={handleUpload}
+                                disabled={selectedFiles.length === 0 || isUploadFilesLoading}
+                                type="button"
+                            >
+                                {isUploadFilesLoading ? (
+                                    <>Uploading...</>
+                                ) : (
+                                    <>
+                                        <ArrowUpTrayIcon className="w-4 h-4 mr-2" />
+                                        Upload
+                                    </>
+                                )}
+                            </Button>
+                        </div>
+                    </div>
+                </DialogContent>
+            </Dialog>
         </div>
     );
 }

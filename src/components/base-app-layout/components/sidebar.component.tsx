@@ -8,9 +8,8 @@ import { Separator } from '@components/ui/separator';
 import { DropdownMenu, DropdownMenuTrigger, DropdownMenuContent, DropdownMenuItem } from '@components/ui/dropdown-menu';
 import { useSessionUser } from '@store';
 import { ChevronDownIcon } from '@heroicons/react/24/outline';
-import { Button } from '@components/ui/button';
 import { Moon, Sun } from 'lucide-react';
-import { useEffect, useState } from 'react';
+import { useTheme } from '@hooks';
 
 type Props = {
     sidebarMenu: SidebarMenu[];
@@ -27,6 +26,7 @@ function getInitials(name: string) {
 
 export function Sidebar({ sidebarMenu, userMenu }: Props) {
     const { name, email } = useSessionUser();
+    const { dark, toggleTheme } = useTheme();
 
     const sidebarItemClassNames = (isActive: boolean, mini = false) =>
         clsx(
@@ -38,26 +38,6 @@ export function Sidebar({ sidebarMenu, userMenu }: Props) {
                 'hover:bg-white/10': !isActive,
             },
         );
-
-    const [dark, setDark] = useState(() => {
-        if (typeof window !== 'undefined') {
-            return (
-                localStorage.getItem('theme') === 'dark' ||
-                (window.matchMedia('(prefers-color-scheme: dark)').matches && !localStorage.getItem('theme'))
-            );
-        }
-        return false;
-    });
-
-    useEffect(() => {
-        if (dark) {
-            document.documentElement.classList.add('dark');
-            localStorage.setItem('theme', 'dark');
-        } else {
-            document.documentElement.classList.remove('dark');
-            localStorage.setItem('theme', 'light');
-        }
-    }, [dark]);
 
     const SidebarContent = ({ mini = false }: { mini?: boolean }) => (
         <nav
@@ -130,7 +110,7 @@ export function Sidebar({ sidebarMenu, userMenu }: Props) {
                         <div className="border-t border-green-200 my-1" />
                         <div className="py-1">
                             <DropdownMenuItem
-                                onClick={() => setDark((d) => !d)}
+                                onClick={toggleTheme}
                                 className="cursor-pointer px-4 py-2 hover:bg-green-700/20 focus:bg-green-700/30 text-green-900 dark:text-white flex items-center gap-2"
                             >
                                 {dark ? (

@@ -3,6 +3,7 @@ import { createBrowserRouter, createRoutesFromElements, Outlet, Route } from 're
 import { Suspense } from '../components/suspense.component';
 
 const Login = lazy(() => import('../views/auth/login/login.view'));
+const Register = lazy(() => import('../views/auth/register/register.view'));
 const Home = lazy(() => import('../views/home/home.view'));
 const Dashboard = lazy(() => import('../views/home/dashboard/dashboard.view'));
 const PropertyId = lazy(() => import('../views/home/property-id/property-id.view'));
@@ -19,7 +20,8 @@ const Simulator = lazy(() => import('../views/home/simulator/simulator.view'));
 export const routes = createBrowserRouter(
     createRoutesFromElements(
         <Route path="/" element={<Outlet />}>
-            <Route path="login" element={<Login />} />
+            <Route path="login" element={Suspense(<Login />)} />
+            <Route path="register" element={Suspense(<Register />)} />
             <Route path="home" element={<Home>{Suspense(<Outlet />)}</Home>}>
                 <Route path="dashboard" element={<Dashboard />} index />
                 <Route path="property-id" element={<PropertyId />} />

@@ -8,6 +8,7 @@ import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
 import { cn } from '../../../lib/utils';
+import { Link } from 'react-router-dom';
 
 const inputClassName = (field: keyof Login, errors: FieldErrors<Login>) => {
     return cn('w-full', {
@@ -67,6 +68,12 @@ export default function LoginView() {
                         ) : null}
                         Login
                     </Button>
+                    <div className="w-full text-center mt-4">
+                        <span className="text-sm text-muted-foreground">Don't have an account? </span>
+                        <Link to="/register" className="text-primary underline">
+                            Register
+                        </Link>
+                    </div>
                 </form>
             </div>
         </div>
