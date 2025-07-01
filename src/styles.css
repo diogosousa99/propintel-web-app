@@ -62,45 +62,60 @@
     }
 
     .dark {
-        --background: 0 0% 3.9%;
-        --foreground: 0 0% 98%;
+        --background: 222 47% 11%; /* #181F2A - azul escuro */
+        --foreground: 220 14% 96%; /* #F3F4F6 - cinza claro */
 
-        --card: 0 0% 3.9%;
-        --card-foreground: 0 0% 98%;
+        --card: 220 29% 16%; /* #232B3A - azul/cinza escuro */
+        --card-foreground: 220 14% 96%; /* #F3F4F6 */
 
-        --popover: 0 0% 3.9%;
-        --popover-foreground: 0 0% 98%;
+        --popover: 220 29% 16%; /* igual ao card */
+        --popover-foreground: 220 14% 96%;
 
-        --primary: 0 0% 98%;
-        --primary-foreground: 0 0% 9%;
+        --primary: 217 91% 60%; /* #3B82F6 - azul Tailwind */
+        --primary-foreground: 220 14% 96%; /* #F3F4F6 */
 
-        --secondary: 0 0% 14.9%;
-        --secondary-foreground: 0 0% 98%;
+        --secondary: 215 28% 17%; /* #232B3A - azul/cinza escuro */
+        --secondary-foreground: 220 14% 96%;
 
-        --muted: 0 0% 14.9%;
-        --muted-foreground: 0 0% 63.9%;
+        --muted: 215 16% 24%; /* #2D3748 - cinza escuro */
+        --muted-foreground: 220 10% 60%; /* #6B7280 - cinza médio */
 
-        --accent: 0 0% 14.9%;
-        --accent-foreground: 0 0% 98%;
+        --accent: 217 33% 17%; /* #1E293B - azul escuro */
+        --accent-foreground: 220 14% 96%;
 
         --destructive: 0 62.8% 30.6%;
         --destructive-foreground: 0 0% 98%;
 
-        --border: 0 0% 14.9%;
-        --input: 0 0% 14.9%;
-        --ring: 0 0% 83.1%;
+        --border: 215 16% 24%; /* igual ao muted */
+        --input: 215 16% 24%;
+        --ring: 217 91% 60%; /* azul */
+
+        --radius: 0.5rem;
+
         --chart-1: 220 70% 50%;
+
         --chart-2: 160 60% 45%;
+
         --chart-3: 30 80% 55%;
+
         --chart-4: 280 65% 60%;
+
         --chart-5: 340 75% 55%;
+
         --sidebar-background: 240 5.9% 10%;
+
         --sidebar-foreground: 240 4.8% 95.9%;
+
         --sidebar-primary: 224.3 76.3% 48%;
+
         --sidebar-primary-foreground: 0 0% 100%;
+
         --sidebar-accent: 240 3.7% 15.9%;
+
         --sidebar-accent-foreground: 240 4.8% 95.9%;
+
         --sidebar-border: 240 3.7% 15.9%;
+
         --sidebar-ring: 217.2 91.2% 59.8%;
     }
 }
@@ -128,4 +143,12 @@
     overflow: hidden;
     text-overflow: ellipsis;
     max-width: 260px;
+}
+
+/* Corrige a borda branca do popup do Leaflet em dark mode */
+.dark .leaflet-popup-content-wrapper,
+.dark .leaflet-popup-tip {
+    border: 1px solid #374151 !important;
+    background: #1f2937 !important;
+    color: #f9fafb !important;
 }

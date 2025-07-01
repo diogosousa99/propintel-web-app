@@ -11,8 +11,10 @@ const MyPropertyDetails = lazy(() => import('../views/home/my-properties/details
 const MyPropertiesExpenses = lazy(() => import('../views/home/my-properties/details/tabs/expenses/expenses.view'));
 const PropertyDocuments = lazy(() => import('../views/home/my-properties/details/tabs/documents/documents.view'));
 const MyDocuments = lazy(() => import('../views/home/my-documents/my-documents.view'));
-const RentabilidadeVenda = lazy(() => import('../components/RentabilidadeVenda'));
-const RentabilidadeArrendamento = lazy(() => import('../components/RentabilidadeArrendamento'));
+const RentabilidadeVenda = lazy(() => import('../components/sale-simulator.component'));
+const RentabilidadeArrendamento = lazy(() => import('../components/rent-simulator.component'));
+const Benchmarking = lazy(() => import('../views/home/benchmarking/benchmarking.view'));
+const Simulator = lazy(() => import('../views/home/simulator/simulator.view'));
 
 export const routes = createBrowserRouter(
     createRoutesFromElements(
@@ -29,6 +31,8 @@ export const routes = createBrowserRouter(
                 <Route path="my-documents" element={<MyDocuments />} index />
                 <Route path="rentabilidade-venda" element={<RentabilidadeVenda />} />
                 <Route path="rentabilidade-arrendamento" element={<RentabilidadeArrendamento />} />
+                <Route path="benchmarking" element={<Benchmarking />} />
+                <Route path="simulator" element={<Simulator />} />
             </Route>
         </Route>,
     ),

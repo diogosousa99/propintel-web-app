@@ -1,7 +1,14 @@
 import { useMemo } from 'react';
 import { BaseAppLayout } from '@components/base-app-layout/base-app-layout.component';
 import { useAppHome, useLogoutApiActions } from '@hooks';
-import { PlusCircleIcon, DocumentIcon, HomeIcon, ChartPieIcon } from '@heroicons/react/24/outline';
+import {
+    PlusCircleIcon,
+    DocumentIcon,
+    HomeIcon,
+    ChartPieIcon,
+    ChartBarIcon,
+    CalculatorIcon,
+} from '@heroicons/react/24/outline';
 
 type Props = {
     children?: React.ReactNode | React.ReactNode[];
@@ -33,6 +40,16 @@ export default function Home({ children }: Props) {
                 name: 'My Documents',
                 icon: <DocumentIcon height={20} />,
                 to: '/home/my-documents',
+            },
+            {
+                name: 'Benchmarking',
+                icon: <ChartBarIcon height={20} />,
+                to: '/home/benchmarking',
+            },
+            {
+                name: 'Simulator',
+                icon: <CalculatorIcon height={20} />,
+                to: '/home/simulator',
             },
         ],
         [],

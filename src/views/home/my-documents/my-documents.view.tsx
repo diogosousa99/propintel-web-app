@@ -26,18 +26,18 @@ function isImageUrl(url: string): boolean {
 function getFileTypeBadge(extension: string) {
     const type = extension.toLowerCase();
     if (['jpg', 'jpeg', 'png', 'gif', 'webp'].includes(type)) {
-        return { label: 'Image', color: 'bg-blue-100 text-blue-800' };
+        return { label: 'Image', color: 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400' };
     }
     if (['pdf'].includes(type)) {
-        return { label: 'PDF', color: 'bg-red-100 text-red-800' };
+        return { label: 'PDF', color: 'bg-red-100 dark:bg-red-900/20 text-red-800 dark:text-red-400' };
     }
     if (['doc', 'docx'].includes(type)) {
-        return { label: 'Word', color: 'bg-blue-100 text-blue-800' };
+        return { label: 'Word', color: 'bg-blue-100 dark:bg-blue-900/20 text-blue-800 dark:text-blue-400' };
     }
     if (['xls', 'xlsx'].includes(type)) {
-        return { label: 'Excel', color: 'bg-green-100 text-green-800' };
+        return { label: 'Excel', color: 'bg-green-100 dark:bg-green-900/20 text-green-800 dark:text-green-400' };
     }
-    return { label: 'Document', color: 'bg-gray-100 text-gray-800' };
+    return { label: 'Document', color: 'bg-gray-100 dark:bg-gray-800 text-gray-800 dark:text-gray-400' };
 }
 
 export default function MyDocuments() {
@@ -74,12 +74,12 @@ export default function MyDocuments() {
     if (!documents?.documents.length) {
         return (
             <>
-                <div className="flex flex-col items-center justify-center h-64 space-y-4">
+                <div className="flex flex-col items-center justify-center h-64 space-y-4 bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen">
                     <div className="p-4 rounded-full bg-muted">
                         <DocumentIcon className="w-8 h-8 text-muted-foreground" />
                     </div>
                     <div className="text-center">
-                        <h3 className="text-lg font-semibold">No documents found</h3>
+                        <h3 className="text-lg font-semibold text-foreground">No documents found</h3>
                         <p className="text-sm text-muted-foreground">You haven't uploaded any documents yet.</p>
                     </div>
                     <Button onClick={() => _setIsUploadModalOpen(true)}>
@@ -89,13 +89,15 @@ export default function MyDocuments() {
                 </div>
 
                 <Dialog open={isUploadModalOpen} onOpenChange={_setIsUploadModalOpen}>
-                    <DialogContent>
+                    <DialogContent className="bg-card border shadow-sm">
                         <DialogHeader>
-                            <DialogTitle>Upload Documents</DialogTitle>
+                            <DialogTitle className="text-foreground">Upload Documents</DialogTitle>
                         </DialogHeader>
                         <div className="space-y-4">
                             <div className="space-y-2">
-                                <Label htmlFor="files">Select files to upload</Label>
+                                <Label htmlFor="files" className="text-foreground">
+                                    Select files to upload
+                                </Label>
                                 <Input
                                     id="files"
                                     type="file"
@@ -106,7 +108,7 @@ export default function MyDocuments() {
                             </div>
                             {selectedFiles.length > 0 && (
                                 <div className="space-y-2">
-                                    <Label>Selected files:</Label>
+                                    <Label className="text-foreground">Selected files:</Label>
                                     <ul className="list-disc list-inside">
                                         {selectedFiles.map((file, index) => (
                                             <li key={index} className="text-sm text-muted-foreground">
@@ -148,7 +150,7 @@ export default function MyDocuments() {
     }
 
     return (
-        <div className="p-12">
+        <div className="p-12 bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800 min-h-screen">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
                 <ModuleTitle title="My Documents" subtitle="Manage your documents" />
                 <div className="sm:ml-auto">
@@ -165,11 +167,11 @@ export default function MyDocuments() {
                     const { label, color } = getFileTypeBadge(extension);
 
                     return (
-                        <Card key={doc.id} className="overflow-hidden">
+                        <Card key={doc.id} className="overflow-hidden bg-card border shadow-sm">
                             <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
                                 <div className="flex items-center space-x-2">
                                     <DocumentIcon className="w-5 h-5 text-muted-foreground" />
-                                    <span className="font-medium truncate">{doc.name}</span>
+                                    <span className="font-medium truncate text-foreground">{doc.name}</span>
                                 </div>
                                 <span className={`px-2 py-1 text-xs rounded-full ${color}`}>{label}</span>
                             </CardHeader>
@@ -179,7 +181,7 @@ export default function MyDocuments() {
                                         Created on {new Date(doc.createdAt).toLocaleDateString()}
                                     </p>
                                     <div className="space-y-1">
-                                        <Label htmlFor={`property-${doc.id}`} className="text-xs">
+                                        <Label htmlFor={`property-${doc.id}`} className="text-xs text-foreground">
                                             Property
                                         </Label>
                                         <Select
@@ -223,13 +225,15 @@ export default function MyDocuments() {
             </div>
 
             <Dialog open={isUploadModalOpen} onOpenChange={_setIsUploadModalOpen}>
-                <DialogContent>
+                <DialogContent className="bg-card border shadow-sm">
                     <DialogHeader>
-                        <DialogTitle>Upload Documents</DialogTitle>
+                        <DialogTitle className="text-foreground">Upload Documents</DialogTitle>
                     </DialogHeader>
                     <div className="space-y-4">
                         <div className="space-y-2">
-                            <Label htmlFor="files">Select files to upload</Label>
+                            <Label htmlFor="files" className="text-foreground">
+                                Select files to upload
+                            </Label>
                             <Input
                                 id="files"
                                 type="file"
@@ -240,7 +244,7 @@ export default function MyDocuments() {
                         </div>
                         {selectedFiles.length > 0 && (
                             <div className="space-y-2">
-                                <Label>Selected files:</Label>
+                                <Label className="text-foreground">Selected files:</Label>
                                 <ul className="list-disc list-inside">
                                     {selectedFiles.map((file, index) => (
                                         <li key={index} className="text-sm text-muted-foreground">
@@ -279,9 +283,9 @@ export default function MyDocuments() {
             </Dialog>
 
             <Dialog open={!!selectedDocument} onOpenChange={() => _setSelectedDocument(null)}>
-                <DialogContent className="max-w-4xl">
+                <DialogContent className="max-w-4xl bg-card border shadow-sm">
                     <DialogHeader>
-                        <DialogTitle>Document Preview</DialogTitle>
+                        <DialogTitle className="text-foreground">Document Preview</DialogTitle>
                     </DialogHeader>
                     <div className="mt-4">
                         {selectedDocument && isImageUrl(selectedDocument) ? (
@@ -298,10 +302,10 @@ export default function MyDocuments() {
             </Dialog>
 
             <AlertDialog open={!!deletingDocument} onOpenChange={() => _setDeletingDocument(null)}>
-                <AlertDialogContent>
+                <AlertDialogContent className="bg-card border shadow-sm">
                     <AlertDialogHeader>
-                        <AlertDialogTitle>Are you sure?</AlertDialogTitle>
-                        <AlertDialogDescription>
+                        <AlertDialogTitle className="text-foreground">Are you sure?</AlertDialogTitle>
+                        <AlertDialogDescription className="text-muted-foreground">
                             This action cannot be undone. This will permanently delete the document.
                         </AlertDialogDescription>
                     </AlertDialogHeader>

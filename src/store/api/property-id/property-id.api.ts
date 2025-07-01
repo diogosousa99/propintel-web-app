@@ -1,6 +1,12 @@
 import { createApi } from '@reduxjs/toolkit/query/react';
 import { baseApi } from '../base-api';
-import { CreateProperty, PropertyIdFileUploadResponse, ProcessDocumentResponse, UserDocumentsResponse } from './types';
+import {
+    CreateProperty,
+    PropertyIdFileUploadResponse,
+    ProcessDocumentResponse,
+    UserDocumentsResponse,
+    ExternalData,
+} from './types';
 
 export const propertyIdApi = createApi({
     reducerPath: 'api/property-id',
@@ -69,6 +75,11 @@ export const propertyIdApi = createApi({
             }),
             providesTags: ['Documents'],
         }),
+        getExternalData: builder.query<ExternalData[], void>({
+            query: () => ({
+                url: '/external-data',
+            }),
+        }),
     }),
 });
 
@@ -80,4 +91,5 @@ export const {
     useDeleteDocumentMutation,
     useUpdateDocumentPropertyMutation,
     useGetPropertyDocumentsQuery,
+    useGetExternalDataQuery,
 } = propertyIdApi;

@@ -9,9 +9,11 @@ export default function MyPropertyDetails() {
     const indexedPortfolio = useIndexedPortfolio();
 
     return (
-        <div className="flex flex-col gap-6 p-12 h-full">
+        <div className="flex flex-col gap-6 p-12 h-full bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800">
             <div className="flex gap-4 items-center">
-                <h1 className="text-3xl font-bold text-black text-nowrap">{indexedPortfolio?.[propertyId]?.name}</h1>
+                <h1 className="text-3xl font-bold text-foreground text-nowrap">
+                    {indexedPortfolio?.[propertyId]?.name}
+                </h1>
                 <Tabs
                     defaultValue={location.pathname.includes('/expenses') ? 'expenses' : 'documents'}
                     className="w-full"

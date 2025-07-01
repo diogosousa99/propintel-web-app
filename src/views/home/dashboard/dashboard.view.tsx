@@ -4,7 +4,6 @@ import { Bar, Doughnut } from 'react-chartjs-2';
 import { Chart as ChartJS, BarElement, CategoryScale, LinearScale, Tooltip, Legend, Title, ArcElement } from 'chart.js';
 import { useBarChart, useComputeMetrics, useDashboardMetadata, useGetDoughnutChartData } from './hooks';
 import { subMonths } from 'date-fns';
-import { Card, CardContent, CardHeader, CardTitle } from '../../../components/ui/card';
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from '../../../components/ui/select';
 import { DatePicker } from '../../../components/ui/date-picker';
 import { DateRange } from 'react-day-picker';
@@ -78,352 +77,258 @@ export default function Dashboard() {
                     </SelectContent>
                 </Select>
             </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="flex flex-col gap-4">
                 {/* GENERAL KPIs Section */}
-                <div className="col-span-full">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-8 w-1 bg-blue-500 rounded-full"></div>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">GENERAL KPIs</h2>
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex-shrink-0">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="h-5 w-1 bg-blue-500 rounded-full"></div>
+                        <h2 className="text-base font-bold text-foreground">GENERAL KPIs</h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Home className="text-gray-400 w-4 h-4 mr-1" /> Properties
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">{totalProperties}</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Number of properties in the portfolio
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <PieChart className="text-gray-400 w-4 h-4 mr-1" /> Total Expenses
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">{totalExpenses} €</span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">Sum of all expenses</span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Euro className="text-gray-400 w-4 h-4 mr-1" /> Total Asset Value
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {totalAssetValue.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Sum of asset values for all properties
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Euro className="text-gray-400 w-4 h-4 mr-1" /> Total Book Value
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {totalBookValue.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Sum of acquisition values for all properties
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Building2 className="text-gray-400 w-4 h-4 mr-1" /> Average €/M2
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {averageAcquisitionM2.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
+                                /m²
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Average acquisition price per square meter
+                            </span>
+                        </div>
                     </div>
                 </div>
-                {/* Properties */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Home className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span
-                                className="text-sm text-muted-foreground"
-                                title="Number of properties in the portfolio"
-                            >
-                                Properties
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {totalProperties}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Total Expenses */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <PieChart className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Sum of all expenses">
-                                Total Expenses
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {totalExpenses} €
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Total Asset Value */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Euro className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span
-                                className="text-sm text-muted-foreground"
-                                title="Sum of asset values for all properties"
-                            >
-                                Total Asset Value
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {totalAssetValue.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Total Book Value */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Euro className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span
-                                className="text-sm text-muted-foreground"
-                                title="Sum of acquisition values for all properties"
-                            >
-                                Total Book Value
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {totalBookValue.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Average €/M2 */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Building2 className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span
-                                className="text-sm text-muted-foreground"
-                                title="Average acquisition price per square meter"
-                            >
-                                Average €/M2
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {averageAcquisitionM2.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}
-                            /m²
-                        </span>
-                    </CardContent>
-                </Card>
-
                 {/* RENTAL OPERATIONS Section */}
-                <div className="col-span-full mt-12">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-8 w-1 bg-green-500 rounded-full"></div>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">RENTAL OPERATIONS</h2>
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex-shrink-0">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="h-5 w-1 bg-green-500 rounded-full"></div>
+                        <h2 className="text-base font-bold text-foreground">RENTAL OPERATIONS</h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <BadgeEuro className="text-gray-400 w-4 h-4 mr-1" /> Total Annual Rental Income
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showRentalKPIs
+                                    ? totalAnnualRentalIncome.toLocaleString('en-US', {
+                                          style: 'currency',
+                                          currency: 'EUR',
+                                      })
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Sum of all annual rental income
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <TrendingUp className="text-gray-400 w-4 h-4 mr-1" /> ROI
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showRentalKPIs ? `${roi.toLocaleString('en-US', { maximumFractionDigits: 2 })}%` : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">Return on investment</span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Percent className="text-gray-400 w-4 h-4 mr-1" /> Portfolio Yield (Renting)
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showRentalKPIs
+                                    ? `${portfolioYield.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Portfolio yield from renting
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <BarChart className="text-gray-400 w-4 h-4 mr-1" /> Average €/M2 (Rent)
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showRentalKPIs
+                                    ? `${averageRentM2.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}/m²`
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Average rent per square meter
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Percent className="text-gray-400 w-4 h-4 mr-1" /> Gross Rent Yield
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showRentalKPIs
+                                    ? `${grossRentYield.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">Gross rent yield</span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Percent className="text-gray-400 w-4 h-4 mr-1" /> Net Rent Yield
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showRentalKPIs
+                                    ? `${netRentYield.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">Net rent yield</span>
+                        </div>
                     </div>
                 </div>
-                {/* Total Annual Rental Income */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <BadgeEuro className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Sum of all annual rental income">
-                                Total Annual Rental Income
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showRentalKPIs
-                                ? totalAnnualRentalIncome.toLocaleString('en-US', {
-                                      style: 'currency',
-                                      currency: 'EUR',
-                                  })
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* ROI */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <TrendingUp className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Return on investment">
-                                ROI
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showRentalKPIs ? `${roi.toLocaleString('en-US', { maximumFractionDigits: 2 })}%` : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Portfolio Yield (Renting) */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Percent className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Portfolio yield from renting">
-                                Portfolio Yield (Renting)
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showRentalKPIs
-                                ? `${portfolioYield.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Average €/M2 (Rent) */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <BarChart className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Average rent per square meter">
-                                Average €/M2 (Rent)
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showRentalKPIs
-                                ? `${averageRentM2.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })}/m²`
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Gross Rent Yield */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Percent className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Gross rent yield">
-                                Gross Rent Yield
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showRentalKPIs
-                                ? `${grossRentYield.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Net Rent Yield */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Percent className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Net rent yield">
-                                Net Rent Yield
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showRentalKPIs
-                                ? `${netRentYield.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-
                 {/* TRADING OPERATIONS Section */}
-                <div className="col-span-full mt-12">
-                    <div className="flex items-center gap-3 mb-6">
-                        <div className="h-8 w-1 bg-purple-500 rounded-full"></div>
-                        <h2 className="text-xl font-bold text-gray-900 dark:text-white">TRADING OPERATIONS</h2>
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex-shrink-0">
+                    <div className="flex items-center gap-3 mb-3">
+                        <div className="h-5 w-1 bg-purple-500 rounded-full"></div>
+                        <h2 className="text-base font-bold text-foreground">TRADING OPERATIONS</h2>
+                    </div>
+                    <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Euro className="text-gray-400 w-4 h-4 mr-1" /> Gross Margin
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showTradingKPIs
+                                    ? grossMargin.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Gross margin from trading
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Euro className="text-gray-400 w-4 h-4 mr-1" /> Net Margin
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showTradingKPIs
+                                    ? netMargin.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Net margin from trading
+                            </span>
+                        </div>
+                        <div className="flex flex-col p-3 bg-gray-50 dark:bg-gray-800 rounded-lg">
+                            <span className="text-gray-500 dark:text-gray-400 text-xs font-medium flex items-center">
+                                <Percent className="text-gray-400 w-4 h-4 mr-1" /> Profit Margin
+                            </span>
+                            <span className="text-sm font-bold text-foreground mt-1">
+                                {showTradingKPIs
+                                    ? `${profitMargin.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
+                                    : '-'}
+                            </span>
+                            <span className="text-xs text-gray-400 dark:text-gray-500 mt-1">
+                                Profit margin percentage
+                            </span>
+                        </div>
                     </div>
                 </div>
-                {/* Gross Margin */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Euro className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Gross margin from trading">
-                                Gross Margin
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showTradingKPIs
-                                ? grossMargin.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Net Margin */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Euro className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Net margin from trading">
-                                Net Margin
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showTradingKPIs
-                                ? netMargin.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
-                {/* Profit Margin */}
-                <Card className="rounded-2xl border bg-white dark:bg-gray-900 shadow-sm hover:shadow-md transition-all duration-200 hover:scale-[1.02]">
-                    <CardContent className="py-6 flex flex-col items-center justify-center">
-                        <span className="mb-2 flex items-center justify-center">
-                            <span className="mr-2">
-                                <Percent className="text-gray-400 w-6 h-6" />
-                            </span>
-                            <span className="text-sm text-muted-foreground" title="Profit margin percentage">
-                                Profit Margin
-                            </span>
-                        </span>
-                        <span className="text-xl font-bold tracking-tight text-gray-900 dark:text-white">
-                            {showTradingKPIs
-                                ? `${profitMargin.toLocaleString('en-US', { maximumFractionDigits: 2 })}%`
-                                : '-'}
-                        </span>
-                    </CardContent>
-                </Card>
             </div>
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 mt-12">
-                <Card className="rounded-2xl shadow-sm border bg-white dark:bg-gray-900 col-span-1 h-full flex flex-col hover:shadow-md transition-all duration-200">
-                    <CardHeader className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
-                        <CardTitle className="text-base font-semibold">Monthly Expenses Breakdown</CardTitle>
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-4 flex-1 mt-3">
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
+                    <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-3">
+                        <span className="text-base font-semibold text-foreground">Monthly Expenses Breakdown</span>
                         <DatePicker
                             mode="range"
                             range={selectedRange}
                             onRangeSelect={handleRangeChange}
                             className="w-full sm:w-[240px]"
                         />
-                    </CardHeader>
-                    <CardContent className="flex flex-col h-full">
-                        <div className="min-h-[300px] md:min-h-[400px] h-full">
-                            <Bar
-                                data={barChart}
-                                options={{
-                                    maintainAspectRatio: false,
-                                    responsive: true,
-                                    plugins: {
-                                        legend: { position: 'top' as const },
-                                        title: { display: false },
-                                    },
-                                    scales: {
-                                        x: { stacked: true },
-                                        y: { stacked: true },
-                                    },
-                                }}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
-                <Card className="rounded-2xl shadow-sm border bg-white dark:bg-gray-900 col-span-1 h-full flex flex-col hover:shadow-md transition-all duration-200">
-                    <CardHeader>
-                        <CardTitle className="text-base font-semibold">Total Expenses by Category</CardTitle>
-                    </CardHeader>
-                    <CardContent className="flex flex-col h-full">
-                        <div className="min-h-[300px] md:min-h-[400px] h-full">
-                            <Doughnut
-                                data={doughnutChart}
-                                options={{
-                                    maintainAspectRatio: false,
-                                    responsive: true,
-                                    plugins: {
-                                        legend: { position: 'bottom' as const },
-                                        title: { display: false },
-                                        tooltip: {
-                                            callbacks: {
-                                                label: function (context) {
-                                                    const label = context.label || '';
-                                                    const value = context.raw as number;
-                                                    const total = context.dataset.data.reduce(
-                                                        (a: number, b: number) => a + b,
-                                                        0,
-                                                    );
-                                                    const percentage = ((value / total) * 100).toFixed(1);
-                                                    return `${label}: ${value.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })} (${percentage}%)`;
-                                                },
+                    </div>
+                    <div className="min-h-[300px] md:min-h-[400px] h-full">
+                        <Bar
+                            data={barChart}
+                            options={{
+                                maintainAspectRatio: false,
+                                responsive: true,
+                                plugins: {
+                                    legend: { position: 'top' as const },
+                                    title: { display: false },
+                                },
+                                scales: {
+                                    x: { stacked: true },
+                                    y: { stacked: true },
+                                },
+                            }}
+                        />
+                    </div>
+                </div>
+                <div className="bg-white dark:bg-gray-900 rounded-lg shadow-sm border border-gray-200 dark:border-gray-700 p-4 flex flex-col h-full">
+                    <div className="mb-3">
+                        <span className="text-base font-semibold text-foreground">Total Expenses by Category</span>
+                    </div>
+                    <div className="min-h-[300px] md:min-h-[400px] h-full">
+                        <Doughnut
+                            data={doughnutChart}
+                            options={{
+                                maintainAspectRatio: false,
+                                responsive: true,
+                                plugins: {
+                                    legend: { position: 'top' as const },
+                                    title: { display: false },
+                                    tooltip: {
+                                        callbacks: {
+                                            label: function (context) {
+                                                const label = context.label || '';
+                                                const value = context.raw as number;
+                                                const total = context.dataset.data.reduce(
+                                                    (a: number, b: number) => a + b,
+                                                    0,
+                                                );
+                                                const percentage = ((value / total) * 100).toFixed(1);
+                                                return `${label}: ${value.toLocaleString('en-US', { style: 'currency', currency: 'EUR' })} (${percentage}%)`;
                                             },
                                         },
                                     },
-                                }}
-                            />
-                        </div>
-                    </CardContent>
-                </Card>
+                                },
+                            }}
+                        />
+                    </div>
+                </div>
             </div>
         </div>
     );

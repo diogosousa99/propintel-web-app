@@ -7,6 +7,9 @@ export default defineConfig({
         open: true,
         port: 4444,
     },
+    optimizeDeps: {
+        include: ['leaflet', 'react-leaflet'],
+    },
     build: {
         rollupOptions: {
             output: {

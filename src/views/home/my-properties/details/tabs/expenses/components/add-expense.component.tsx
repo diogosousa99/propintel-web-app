@@ -65,7 +65,7 @@ export function AddExpense() {
                             name={EXPENSES_FORM_FIELDS.category}
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel className="text-black">Category*</FormLabel>
+                                    <FormLabel className="text-foreground">Category*</FormLabel>
                                     <Select
                                         value={field.value ? String(field.value) : ''}
                                         onValueChange={field.onChange}
@@ -94,7 +94,7 @@ export function AddExpense() {
                                 name={EXPENSES_FORM_FIELDS.name!}
                                 render={({ field }) => (
                                     <FormItem className="w-full">
-                                        <FormLabel className="text-black">Name*</FormLabel>
+                                        <FormLabel className="text-foreground">Name*</FormLabel>
                                         <FormControl>
                                             <Input placeholder="Name" {...field} />
                                         </FormControl>
@@ -109,7 +109,7 @@ export function AddExpense() {
                             name={EXPENSES_FORM_FIELDS.value}
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel className="text-black">Value (€)*</FormLabel>
+                                    <FormLabel className="text-foreground">Value (€)*</FormLabel>
                                     <FormControl>
                                         <Input
                                             placeholder="Value (€)"
@@ -135,7 +135,7 @@ export function AddExpense() {
                             name={EXPENSES_FORM_FIELDS.date}
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel className="text-black">Date*</FormLabel>
+                                    <FormLabel className="text-foreground">Date*</FormLabel>
                                     <FormControl>
                                         <DatePicker
                                             date={field.value ? new Date(field.value) : undefined}
@@ -152,7 +152,7 @@ export function AddExpense() {
                             name={EXPENSES_FORM_FIELDS.description}
                             render={({ field }) => (
                                 <FormItem className="w-full">
-                                    <FormLabel className="text-black">Description</FormLabel>
+                                    <FormLabel className="text-foreground">Description</FormLabel>
                                     <FormControl>
                                         <Textarea placeholder="Description" className="max-h-52" {...field} />
                                     </FormControl>

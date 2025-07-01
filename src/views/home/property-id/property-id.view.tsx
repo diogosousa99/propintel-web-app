@@ -40,7 +40,7 @@ const PropertyId = () => {
     }, [isProcessingDocument]);
 
     return (
-        <div className="p-4 sm:p-6 md:p-8 lg:p-12 h-full">
+        <div className="p-4 sm:p-6 md:p-8 lg:p-12 h-full bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800">
             <ModuleTitle title="Property ID" subtitle="Add a new property" />
             <div className="flex justify-end mb-4 gap-2">
                 <Button onClick={() => _setIsUploadModalOpen(true)} className="gap-2">
@@ -48,7 +48,7 @@ const PropertyId = () => {
                     Upload Documents
                 </Button>
             </div>
-            <Card>
+            <Card className="bg-card border shadow-sm">
                 <CardContent className="p-4 sm:p-6">
                     <Form {...propertyIdForm}>
                         <form onSubmit={propertyIdForm.handleSubmit(_handleCreateProperty)} className="space-y-4">
@@ -58,7 +58,7 @@ const PropertyId = () => {
                                     name="name"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Name *</FormLabel>
+                                            <FormLabel className="text-foreground">Name *</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -71,7 +71,7 @@ const PropertyId = () => {
                                     name="localization"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Localization *</FormLabel>
+                                            <FormLabel className="text-foreground">Localization *</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -84,7 +84,7 @@ const PropertyId = () => {
                                     name="acquisitionValue"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Acquisition Value *</FormLabel>
+                                            <FormLabel className="text-foreground">Acquisition Value *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -98,7 +98,7 @@ const PropertyId = () => {
                                     name="taxId"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Tax ID *</FormLabel>
+                                            <FormLabel className="text-foreground">Tax ID *</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -112,7 +112,7 @@ const PropertyId = () => {
                                     name="landRegistryArticle"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Land Registry Article *</FormLabel>
+                                            <FormLabel className="text-foreground">Land Registry Article *</FormLabel>
                                             <FormControl>
                                                 <Input {...field} />
                                             </FormControl>
@@ -126,7 +126,7 @@ const PropertyId = () => {
                                     name="price"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Price *</FormLabel>
+                                            <FormLabel className="text-foreground">Price *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -140,7 +140,7 @@ const PropertyId = () => {
                                     name="stampDuty"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Stamp Duty *</FormLabel>
+                                            <FormLabel className="text-foreground">Stamp Duty *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -154,7 +154,7 @@ const PropertyId = () => {
                                     name="deedExpenses"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Deed Expenses *</FormLabel>
+                                            <FormLabel className="text-foreground">Deed Expenses *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -168,7 +168,7 @@ const PropertyId = () => {
                                     name="imtPaid"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>IMT Paid *</FormLabel>
+                                            <FormLabel className="text-foreground">IMT Paid *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -182,7 +182,7 @@ const PropertyId = () => {
                                     name="acquisitionDate"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Acquisition Date *</FormLabel>
+                                            <FormLabel className="text-foreground">Acquisition Date *</FormLabel>
                                             <FormControl>
                                                 <DatePicker
                                                     date={field.value ? new Date(field.value) : undefined}
@@ -199,24 +199,26 @@ const PropertyId = () => {
                                     name="typology"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Typology *</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
-                                            <FormMessage />
-                                        </FormItem>
-                                    )}
-                                />
-
-                                <FormField
-                                    control={propertyIdForm.control}
-                                    name="fraction"
-                                    render={({ field }) => (
-                                        <FormItem>
-                                            <FormLabel>Fraction *</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
+                                            <FormLabel className="text-foreground">Typology *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select typology" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="T1">T1</SelectItem>
+                                                    <SelectItem value="T2">T2</SelectItem>
+                                                    <SelectItem value="T3">T3</SelectItem>
+                                                    <SelectItem value="T4">T4</SelectItem>
+                                                    <SelectItem value="T5">T5</SelectItem>
+                                                    <SelectItem value="T6">T6</SelectItem>
+                                                    <SelectItem value="T7">T7</SelectItem>
+                                                    <SelectItem value="T8">T8</SelectItem>
+                                                    <SelectItem value="T9">T9</SelectItem>
+                                                    <SelectItem value="T10">T10</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -227,10 +229,18 @@ const PropertyId = () => {
                                     name="affectation"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Affectation *</FormLabel>
-                                            <FormControl>
-                                                <Input {...field} />
-                                            </FormControl>
+                                            <FormLabel className="text-foreground">Affectation *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select affectation" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Rental">Rental</SelectItem>
+                                                    <SelectItem value="Trading">Trading</SelectItem>
+                                                </SelectContent>
+                                            </Select>
                                             <FormMessage />
                                         </FormItem>
                                     )}
@@ -241,17 +251,22 @@ const PropertyId = () => {
                                     name="category"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Category *</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormLabel className="text-foreground">Category *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
                                                         <SelectValue placeholder="Select category" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
-                                                    <SelectItem value="On Hold">On Hold</SelectItem>
-                                                    <SelectItem value="Trading">Trading</SelectItem>
-                                                    <SelectItem value="Arrendamento">Arrendamento</SelectItem>
+                                                    <SelectItem value="Apartment">Apartment</SelectItem>
+                                                    <SelectItem value="House">House</SelectItem>
+                                                    <SelectItem value="Villa">Villa</SelectItem>
+                                                    <SelectItem value="Land">Land</SelectItem>
+                                                    <SelectItem value="Commercial">Commercial</SelectItem>
+                                                    <SelectItem value="Office">Office</SelectItem>
+                                                    <SelectItem value="Warehouse">Warehouse</SelectItem>
+                                                    <SelectItem value="Other">Other</SelectItem>
                                                 </SelectContent>
                                             </Select>
                                             <FormMessage />
@@ -261,10 +276,10 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="privateGrossArea"
+                                    name="area"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Private Gross Area *</FormLabel>
+                                            <FormLabel className="text-foreground">Area (m²) *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -275,10 +290,10 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="dependentGrossArea"
+                                    name="bedrooms"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Dependent Gross Area *</FormLabel>
+                                            <FormLabel className="text-foreground">Bedrooms *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -289,10 +304,10 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="garden"
+                                    name="bathrooms"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Garden</FormLabel>
+                                            <FormLabel className="text-foreground">Bathrooms *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -303,10 +318,10 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="balcony"
+                                    name="parking"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Balcony</FormLabel>
+                                            <FormLabel className="text-foreground">Parking *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -317,14 +332,61 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="energyCertificate"
+                                    name="elevator"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Energy Certificate</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
+                                            <FormLabel className="text-foreground">Elevator *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
                                                 <FormControl>
                                                     <SelectTrigger>
-                                                        <SelectValue placeholder="Select energy certificate" />
+                                                        <SelectValue placeholder="Select elevator" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="Yes">Yes</SelectItem>
+                                                    <SelectItem value="No">No</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="condition"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-foreground">Condition *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select condition" />
+                                                    </SelectTrigger>
+                                                </FormControl>
+                                                <SelectContent>
+                                                    <SelectItem value="New">New</SelectItem>
+                                                    <SelectItem value="Good">Good</SelectItem>
+                                                    <SelectItem value="Fair">Fair</SelectItem>
+                                                    <SelectItem value="Poor">Poor</SelectItem>
+                                                    <SelectItem value="To Renovate">To Renovate</SelectItem>
+                                                </SelectContent>
+                                            </Select>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="energyRating"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-foreground">Energy Rating *</FormLabel>
+                                            <Select onValueChange={field.onChange} defaultValue={field.value}>
+                                                <FormControl>
+                                                    <SelectTrigger>
+                                                        <SelectValue placeholder="Select energy rating" />
                                                     </SelectTrigger>
                                                 </FormControl>
                                                 <SelectContent>
@@ -346,10 +408,10 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="assetValue"
+                                    name="yearBuilt"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>Asset Value *</FormLabel>
+                                            <FormLabel className="text-foreground">Year Built *</FormLabel>
                                             <FormControl>
                                                 <Input type="text" inputMode="numeric" {...field} />
                                             </FormControl>
@@ -360,130 +422,106 @@ const PropertyId = () => {
 
                                 <FormField
                                     control={propertyIdForm.control}
-                                    name="state"
+                                    name="floor"
                                     render={({ field }) => (
                                         <FormItem>
-                                            <FormLabel>State *</FormLabel>
-                                            <Select onValueChange={field.onChange} value={field.value}>
-                                                <FormControl>
-                                                    <SelectTrigger>
-                                                        <SelectValue placeholder="Select state" />
-                                                    </SelectTrigger>
-                                                </FormControl>
-                                                <SelectContent>
-                                                    <SelectItem value="New">New</SelectItem>
-                                                    <SelectItem value="Used">Used</SelectItem>
-                                                </SelectContent>
-                                            </Select>
+                                            <FormLabel className="text-foreground">Floor *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
                                             <FormMessage />
                                         </FormItem>
                                     )}
                                 />
 
-                                {propertyIdForm.watch('category') === 'Arrendamento' && (
-                                    <FormField
-                                        control={propertyIdForm.control}
-                                        name="monthlyIncome"
-                                        render={({ field }) => (
-                                            <FormItem>
-                                                <FormLabel>Monthly Income *</FormLabel>
-                                                <FormControl>
-                                                    <Input type="text" inputMode="numeric" {...field} />
-                                                </FormControl>
-                                                <FormMessage />
-                                            </FormItem>
-                                        )}
-                                    />
-                                )}
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="totalFloors"
+                                    render={({ field }) => (
+                                        <FormItem>
+                                            <FormLabel className="text-foreground">Total Floors *</FormLabel>
+                                            <FormControl>
+                                                <Input type="text" inputMode="numeric" {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
+
+                                <FormField
+                                    control={propertyIdForm.control}
+                                    name="description"
+                                    render={({ field }) => (
+                                        <FormItem className="col-span-2">
+                                            <FormLabel className="text-foreground">Description</FormLabel>
+                                            <FormControl>
+                                                <Input {...field} />
+                                            </FormControl>
+                                            <FormMessage />
+                                        </FormItem>
+                                    )}
+                                />
                             </div>
+
                             <div className="flex justify-end">
-                                <Button
-                                    type="submit"
-                                    disabled={isCreatePropertyLoading || !propertyIdForm.formState.isValid}
-                                    className="w-full sm:w-auto"
-                                >
+                                <Button type="submit" disabled={isCreatePropertyLoading}>
                                     {isCreatePropertyLoading ? (
-                                        <div className="animate-spin mr-2 h-4 w-4 rounded-full border-2 border-white border-t-transparent" />
+                                        <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
                                     ) : null}
-                                    {isCreatePropertyLoading ? 'Creating...' : 'Create'}
+                                    Create Property
                                 </Button>
                             </div>
                         </form>
                     </Form>
                 </CardContent>
             </Card>
+
             <Dialog open={isUploadModalOpen} onOpenChange={_setIsUploadModalOpen}>
-                <DialogContent className="sm:max-w-[425px]">
+                <DialogContent className="bg-card border shadow-sm">
                     <DialogHeader>
-                        <DialogTitle>Upload Documents</DialogTitle>
-                        <DialogDescription>
-                            Upload property documents to process and extract information automatically.
+                        <DialogTitle className="text-foreground">Upload Documents</DialogTitle>
+                        <DialogDescription className="text-muted-foreground">
+                            Upload documents to process and extract property information.
                         </DialogDescription>
                     </DialogHeader>
-                    <Form {...propertyIdForm}>
-                        <form className="space-y-4">
+                    <div className="space-y-4">
+                        <div className="space-y-2">
+                            <label className="text-sm font-medium text-foreground">Select Documents</label>
+                            <input
+                                type="file"
+                                multiple
+                                accept=".pdf,.doc,.docx,.jpg,.jpeg,.png"
+                                onChange={(e) => _setSelectedFiles(Array.from(e.target.files || []))}
+                                className="w-full p-2 border border-input rounded-md bg-background text-foreground"
+                            />
+                        </div>
+                        {selectedFiles.length > 0 && (
                             <div className="space-y-2">
-                                <FormLabel>Select Files</FormLabel>
-                                <Input
-                                    type="file"
-                                    multiple
-                                    accept=".pdf,.jpg,.jpeg,.png"
-                                    onChange={(e) => _setSelectedFiles(Array.from(e.target.files ?? []))}
-                                />
+                                <label className="text-sm font-medium text-foreground">Selected Files:</label>
+                                <ul className="space-y-1">
+                                    {selectedFiles.map((file, index) => (
+                                        <li key={index} className="text-sm text-muted-foreground">
+                                            {file.name}
+                                        </li>
+                                    ))}
+                                </ul>
                             </div>
-                            <div>
-                                <FormLabel>Uploaded Documents</FormLabel>
-                                <div className="space-y-2 max-w-full overflow-x-auto">
-                                    {userDocuments?.documents.length ? (
-                                        userDocuments.documents.map((doc) => (
-                                            <div
-                                                key={doc.url}
-                                                className="flex items-center justify-between border rounded px-3 py-2 bg-muted/50 w-full"
-                                            >
-                                                <div className="flex items-center gap-2 min-w-0 flex-1">
-                                                    <span className="ellipsis" title={doc.name}>
-                                                        {doc.name}
-                                                    </span>
-                                                </div>
-                                                <Button
-                                                    size="sm"
-                                                    variant="outline"
-                                                    onClick={() => {
-                                                        _setIsUploadModalOpen(false);
-                                                        _handleProcessDocument(doc.url, propertyIdForm.reset);
-                                                    }}
-                                                    disabled={isProcessingDocument}
-                                                >
-                                                    Process
-                                                </Button>
-                                            </div>
-                                        ))
-                                    ) : (
-                                        <div className="text-xs text-muted-foreground">No documents uploaded yet.</div>
-                                    )}
-                                </div>
-                            </div>
-                            <div className="flex flex-col sm:flex-row justify-end space-y-2 sm:space-y-0 sm:space-x-4 items-center">
-                                <Button
-                                    variant="outline"
-                                    onClick={() => _setIsUploadModalOpen(false)}
-                                    className="w-full sm:w-auto"
-                                >
-                                    Cancel
-                                </Button>
-                                <Button
-                                    onClick={() => _handleUploadFiles(selectedFiles)}
-                                    disabled={selectedFiles.length === 0 || isUploadFilesLoading}
-                                    className="w-full sm:w-auto"
-                                >
-                                    {isUploadFilesLoading ? (
-                                        <div className="animate-spin mr-2 h-4 w-4 rounded-full border-2 border-primary border-t-transparent" />
-                                    ) : null}
-                                    {isUploadFilesLoading ? 'Uploading...' : 'Upload'}
-                                </Button>
-                            </div>
-                        </form>
-                    </Form>
+                        )}
+                        <div className="flex justify-end gap-2">
+                            <Button variant="outline" onClick={() => _setIsUploadModalOpen(false)}>
+                                Cancel
+                            </Button>
+                            <Button
+                                onClick={_handleUploadFiles}
+                                disabled={isUploadFilesLoading || selectedFiles.length === 0}
+                            >
+                                {isUploadFilesLoading ? (
+                                    <div className="mr-2 h-4 w-4 animate-spin rounded-full border-2 border-primary border-t-transparent" />
+                                ) : null}
+                                Upload
+                            </Button>
+                        </div>
+                    </div>
                 </DialogContent>
             </Dialog>
         </div>

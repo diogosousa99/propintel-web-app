@@ -46,3 +46,15 @@ export interface UserDocumentsResponse {
         createdAt: string;
     }>;
 }
+
+export type ExternalData = {
+    id: number;
+    price: number;
+    latitude: number;
+    longitude: number;
+    province: string;
+    address: string;
+    title: string;
+    subtitle: string;
+    type: string;
+};

@@ -3,7 +3,7 @@ import { useLoginViewModel } from './hooks';
 import { Login } from '@store';
 import LoginImg from '../../../assets/login.jpg';
 import { FieldErrors } from 'react-hook-form';
-import { LogoLarge } from '@components';
+import { LogoLarge } from '../../../components';
 import { Button } from '../../../components/ui/button';
 import { Input } from '../../../components/ui/input';
 import { Label } from '../../../components/ui/label';
@@ -23,7 +23,7 @@ export default function LoginView() {
     const { errors } = formState;
 
     return (
-        <div className="flex items-center h-screen p-4">
+        <div className="flex items-center h-screen p-4 bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800">
             <img src={LoginImg} alt="Logo" className="w-1/2 h-full object-cover rounded-2xl" />
             <div className="flex flex-col w-1/2 gap-11">
                 <div className="flex justify-center">
@@ -31,7 +31,9 @@ export default function LoginView() {
                 </div>
                 <form className="flex flex-col items-center p-32 pt-0 gap-8" onSubmit={handleSubmit(_handleLogin)}>
                     <div className="w-full space-y-2">
-                        <Label htmlFor={LOGIN_FORM_FIELDS.email}>Email*</Label>
+                        <Label htmlFor={LOGIN_FORM_FIELDS.email} className="text-foreground">
+                            Email*
+                        </Label>
                         <Input
                             id={LOGIN_FORM_FIELDS.email}
                             className={inputClassName(LOGIN_FORM_FIELDS.email, errors)}
@@ -43,7 +45,9 @@ export default function LoginView() {
                         ) : null}
                     </div>
                     <div className="w-full space-y-2">
-                        <Label htmlFor={LOGIN_FORM_FIELDS.password}>Password*</Label>
+                        <Label htmlFor={LOGIN_FORM_FIELDS.password} className="text-foreground">
+                            Password*
+                        </Label>
                         <Input
                             id={LOGIN_FORM_FIELDS.password}
                             className={inputClassName(LOGIN_FORM_FIELDS.password, errors)}

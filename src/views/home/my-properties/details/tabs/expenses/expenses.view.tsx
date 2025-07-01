@@ -24,8 +24,10 @@ function ManageExpenses({ onEdit, onDelete }: { onEdit: () => void; onDelete: ()
                     <EllipsisHorizontalIcon className="w-5 h-5" />
                 </Button>
             </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-                <DropdownMenuItem onClick={onEdit}>Edit</DropdownMenuItem>
+            <DropdownMenuContent align="end" className="bg-card border shadow-sm">
+                <DropdownMenuItem onClick={onEdit} className="text-foreground">
+                    Edit
+                </DropdownMenuItem>
                 <DropdownMenuItem className="text-destructive" onClick={onDelete}>
                     Delete
                 </DropdownMenuItem>
@@ -114,27 +116,29 @@ export default function MyPropertyExpenses() {
                     </Select>
                     <AddExpense />
                 </div>
-                <div className="rounded-md border">
+                <div className="rounded-md border bg-card shadow-sm">
                     <Table>
                         <TableHeader>
                             <TableRow>
-                                <TableHead className="w-1/4">Category</TableHead>
-                                <TableHead className="w-1/4">Value</TableHead>
-                                <TableHead className="w-1/4">Date</TableHead>
-                                <TableHead className="w-1/4">Description</TableHead>
+                                <TableHead className="w-1/4 text-foreground">Category</TableHead>
+                                <TableHead className="w-1/4 text-foreground">Value</TableHead>
+                                <TableHead className="w-1/4 text-foreground">Date</TableHead>
+                                <TableHead className="w-1/4 text-foreground">Description</TableHead>
                                 <TableHead className="w-[50px]"></TableHead>
                             </TableRow>
                         </TableHeader>
                         <TableBody>
                             {expenses.map((expense: ExpenseRow) => (
-                                <TableRow key={`${expense.id} ${expense.date}`}>
+                                <TableRow key={`${expense.id} ${expense.date}`} className="hover:bg-muted/50">
                                     <TableCell className="font-medium">
                                         <span className="text-xs px-2 py-1 rounded-full bg-secondary text-secondary-foreground">
                                             {expense.categoryName}
                                         </span>
                                     </TableCell>
-                                    <TableCell>{expense.value}</TableCell>
-                                    <TableCell>{new Date(expense.date).toLocaleDateString()}</TableCell>
+                                    <TableCell className="text-foreground">{expense.value}</TableCell>
+                                    <TableCell className="text-foreground">
+                                        {new Date(expense.date).toLocaleDateString()}
+                                    </TableCell>
                                     <TableCell className="text-muted-foreground">{expense.description}</TableCell>
                                     <TableCell>
                                         <ManageExpenses
@@ -149,11 +153,11 @@ export default function MyPropertyExpenses() {
                 </div>
             </div>
             <Dialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-                <DialogContent>
+                <DialogContent className="bg-card border shadow-sm">
                     <DialogHeader>
-                        <DialogTitle>Confirm Deletion</DialogTitle>
+                        <DialogTitle className="text-foreground">Confirm Deletion</DialogTitle>
                     </DialogHeader>
-                    <div>Are you sure you want to delete this expense?</div>
+                    <div className="text-foreground">Are you sure you want to delete this expense?</div>
                     <DialogFooter>
                         <Button type="button" variant="ghost" onClick={cancelDelete}>
                             Cancel

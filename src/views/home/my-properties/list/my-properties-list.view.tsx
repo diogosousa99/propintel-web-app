@@ -36,7 +36,7 @@ export default function MyPropertiesList() {
     };
 
     return (
-        <div className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 md:p-8 lg:p-12 h-full">
+        <div className="flex flex-col gap-4 sm:gap-6 p-4 sm:p-6 md:p-8 lg:p-12 h-full bg-gradient-to-br from-slate-50 to-white dark:from-gray-900 dark:to-gray-800">
             <div className="flex flex-col sm:flex-row gap-4 sm:gap-0">
                 <ModuleTitle title="My Properties" subtitle="List of added properties" />
                 <Input
@@ -47,7 +47,7 @@ export default function MyPropertiesList() {
                     onChange={(e) => _setSearch(e.target.value)}
                 />
             </div>
-            <div className="overflow-x-auto rounded-lg border bg-card">
+            <div className="overflow-x-auto rounded-lg border bg-card shadow-sm">
                 <Table>
                     <TableHeader>
                         <TableRow>
@@ -81,7 +81,7 @@ export default function MyPropertiesList() {
                         {data?.results?.map((property) => (
                             <TableRow
                                 key={property.id}
-                                className="hover:cursor-pointer"
+                                className="hover:cursor-pointer hover:bg-muted/50"
                                 onClick={() => navigate(`/home/my-properties/${property.id}/expenses`)}
                             >
                                 <TableCell className="font-medium whitespace-nowrap">{property.name}</TableCell>
